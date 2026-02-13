@@ -13,12 +13,13 @@ Jannes Muenchow, Robin Lovelace, Jakub Nowosad
 
 ## Brief biography of the instructors
 
-Jannes Muenchow is a Senior Data Scientist & DevOps Engineer at cynkra with expertise in spatial modeling, geomorphology, and R-GIS integration. He is co-author of Geocomputation with R and the qgisprocess and RQGIS packages.
+Jannes Muenchow is a Senior Data Scientist & DevOps Engineer at cynkra, with expertise in spatial modeling, geomorphology, and R-GIS integration. He is also a developer of the `qgisprocess` and `RQGIS` packages.
 
-Robin Lovelace is a Professor of Transport Data Science at the University of Leeds. He is lead author of Geocomputation with R and develops open-source tools for sustainable transport planning, including the Propensity to Cycle Tool (see [pct.bike](https://www.pct.bike/)), Active Travel England's [Plan tool](https://plan.activetravelengland.gov.uk), and the [Network Planning Tool for Scotland](https://npt.scot).
+Robin Lovelace is Professor of Transport Data Science at the University of Leeds. He develops open-source tools for sustainable transport planning, including the Propensity to Cycle Tool ([pct.bike](https://www.pct.bike/)), Active Travel England's [Plan tool](https://plan.activetravelengland.gov.uk), and Scotland's [Network Planning Tool](https://npt.scot).
 
-Jakub Nowosad is an Associate Professor at Adam Mickiewicz University in Poznan, specializing in spatial analysis, geocomputation, and landscape ecology. He is co-author of Geocomputation with R and several R packages including spData.
+Jakub Nowosad is an Associate Professor at Adam Mickiewicz University in Poznań and a Visiting Scientist at the University of Münster, specializing in geocomputation, spatial machine learning, and environmental analytics. He develops R packages including `spData`, `landscapemetrics` and `supercells`, supporting reproducible and scalable spatial data analysis.
 
+Jannes Muenchow, Robin Lovelace, and Jakub Nowosad are authors of *Geocomputation with R*.
 
 ## Broad topic that it covers
 
@@ -42,30 +43,33 @@ morning (8:30-12:00)
 
 ## Abstract (up to 250 words)
 
-R has become one of the most widely used languages for geographic data science. With over 21,000 packages on CRAN, it offers extensive support for spatial data handling, analysis, and visualization. R's flexibility and statistical capabilities make it attractive for researchers and practitioners working with geographic data across disciplines.
+R has become one of the most widely used languages for geographic data science. Its strength lies in a well-established ecosystem of several hundred spatial packages that support geographic data handling, analysis, and visualization, while integrating seamlessly with R’s wider tools for data processing and statistical analysis. R's flexibility and statistical capabilities make it attractive for researchers and practitioners working with geographic data across disciplines.
 
-This hands-on tutorial introduces R's geospatial capabilities, building on the second edition of the book Geocomputation with R (https://r.geocompx.org/) by the tutorial instructors. We cover four core topics that provide a solid foundation for working with geographic data in R:
+This hands-on tutorial introduces R's geospatial capabilities, building on the second edition of the book Geocomputation with R (https://r.geocompx.org/) by the tutorial instructors. We cover three core topics that provide a solid foundation for working with geographic data in R:
 
 - Vector data with the sf package, implementing the simple features standard for representing points, lines, and polygons.
 - Raster data with the terra package for gridded data such as remote sensing imagery and digital elevation models.
 - Spatial data visualization using the tmap package for creating static and interactive maps.
-- An additional applied topic, time permitting (e.g., cloud-native geospatial workflows or Python interoperability).
+
+In addition, time permitting, we include an additional applied topic (e.g., cloud-native geospatial workflows or Python interoperability).
 
 Participants will learn to import, manipulate, and visualize geographic data through a mixture of presentations, live coding demonstrations, and interactive exercises. A Docker image will be provided for easy setup, ensuring all participants have a working environment from the start. No prior spatial experience is required — only basic familiarity with R.
 
 
 ## Prerequisites and intended audience
 
-Basic R knowledge (data frames, functions, indexing). Laptop with Docker installed (recommended — a pre-built Rocker image with R, RStudio, and all packages will be provided) or with R and RStudio installed locally. Familiarity with the tidyverse is helpful but not required. No prior spatial/GIS experience needed. Intended for: researchers, data scientists, and practitioners working with or interested in geographic data.
+Participants should have basic R knowledge (e.g., data frames, functions, and indexing). A laptop with Docker installed is recommended, as a pre-built Rocker image containing R, RStudio, and all required packages will be provided; alternatively, participants may use a local installation of R and RStudio. Familiarity with the tidyverse is helpful but not required, and no prior experience with spatial data or GIS software is assumed.
+
+This course is aimed at researchers, data scientists, and practitioners who work with geographic or spatial data, as well as those who are interested in incorporating spatial analysis and visualization into their existing data science workflows across disciplines.
 
 
 ## Outline of the tutorial
 
-Introduction and setup (30 min)
-Vector data with sf — presentation and exercises (45 min)
-Raster data with terra — presentation and exercises (45 min)
-Visualization with tmap — presentation and exercises (45 min)
-Additional topic / exercises / Q&A (15 min)
+- Introduction and setup (20 min)
+- Vector data with sf — presentation and exercises (45 min)
+- Raster data with terra — presentation and exercises (45 min)
+- Visualization with tmap — presentation and exercises (45 min)
+- Additional topic / exercises / Q&A (25 min)
 
 
 ## Link to the tutorial materials (if available)
