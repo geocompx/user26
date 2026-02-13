@@ -13,13 +13,13 @@ Jannes Muenchow, Robin Lovelace, Jakub Nowosad
 
 ## Brief biography of the instructors
 
+Jannes Muenchow, Robin Lovelace, and Jakub Nowosad are co-authors of *Geocomputation with R* and contributors to open-source geospatial R tools.
+
 Jannes Muenchow is a Senior Data Scientist & DevOps Engineer at cynkra, with expertise in spatial modeling, geomorphology, and R-GIS integration. He is also a developer of the `qgisprocess` and `RQGIS` packages.
 
 Robin Lovelace is Professor of Transport Data Science at the University of Leeds. He develops open-source tools for sustainable transport planning, including the Propensity to Cycle Tool ([pct.bike](https://www.pct.bike/)), Active Travel England's [Plan tool](https://plan.activetravelengland.gov.uk), and Scotland's [Network Planning Tool](https://npt.scot).
 
 Jakub Nowosad is an Associate Professor at Adam Mickiewicz University in Poznań and a Visiting Scientist at the University of Münster, specializing in geocomputation, spatial machine learning, and environmental analytics. He develops R packages including `spData`, `landscapemetrics` and `supercells`, supporting reproducible and scalable spatial data analysis.
-
-Jannes Muenchow, Robin Lovelace, and Jakub Nowosad are authors of *Geocomputation with R*.
 
 ## Broad topic that it covers
 
@@ -53,7 +53,7 @@ This hands-on tutorial introduces R's geospatial capabilities, building on the s
 
 In addition, time permitting, we include an additional applied topic (e.g., cloud-native geospatial workflows or Python interoperability).
 
-Participants will learn to import, manipulate, and visualize geographic data through a mixture of presentations, live coding demonstrations, and interactive exercises. A Docker image will be provided for easy setup, ensuring all participants have a working environment from the start. No prior spatial experience is required — only basic familiarity with R.
+Participants will learn to import, manipulate, and visualize geographic data through a mixture of presentations, live coding demonstrations, and interactive exercises. By the end of the tutorial, participants will have a practical understanding of how to work with spatial data in R and will be equipped with resources to continue learning and applying geocomputation techniques in their own work.
 
 
 ## Prerequisites and intended audience
