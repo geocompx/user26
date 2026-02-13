@@ -15,7 +15,7 @@ Jannes Muenchow, Robin Lovelace, Jakub Nowosad
 
 Jannes Muenchow is a Senior Data Scientist & DevOps Engineer at cynkra with expertise in spatial modeling, geomorphology, and R-GIS integration. He is co-author of Geocomputation with R and the qgisprocess and RQGIS packages.
 
-Robin Lovelace is an Associate Professor of Transport Data Science at the University of Leeds. He is lead author of Geocomputation with R and develops open-source tools for sustainable transport planning.
+Robin Lovelace is a Professor of Transport Data Science at the University of Leeds. He is lead author of Geocomputation with R and develops open-source tools for sustainable transport planning.
 
 Jakub Nowosad is an Associate Professor at Adam Mickiewicz University in Poznan, specializing in spatial analysis, geocomputation, and landscape ecology. He is co-author of Geocomputation with R and several R packages including spData.
 
@@ -49,7 +49,7 @@ This hands-on tutorial introduces R's geospatial capabilities, building on the s
 - Vector data with the sf package, implementing the simple features standard for representing points, lines, and polygons.
 - Raster data with the terra package for gridded data such as remote sensing imagery and digital elevation models.
 - Spatial data visualization using the tmap package for creating static and interactive maps.
-- An additional applied topic, time permitting (e.g., GIS bridges via qgisprocess, cloud-native geospatial workflows, or geocomputation with Python).
+- An additional applied topic, time permitting (e.g., cloud-native geospatial workflows or Python interoperability).
 
 Participants will learn to import, manipulate, and visualize geographic data through a mixture of presentations, live coding demonstrations, and interactive exercises. A Docker image will be provided for easy setup, ensuring all participants have a working environment from the start. No prior spatial experience is required — only basic familiarity with R.
 
