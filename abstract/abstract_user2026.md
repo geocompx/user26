@@ -15,7 +15,7 @@ Jannes Muenchow, Robin Lovelace, Jakub Nowosad
 
 Jannes Muenchow is a Senior Data Scientist & DevOps Engineer at cynkra with expertise in spatial modeling, geomorphology, and R-GIS integration. He is co-author of Geocomputation with R and the qgisprocess and RQGIS packages.
 
-Robin Lovelace is a Professor of Transport Data Science at the University of Leeds. He is lead author of Geocomputation with R and develops open-source tools for sustainable transport planning.
+Robin Lovelace is a Professor of Transport Data Science at the University of Leeds. He is lead author of Geocomputation with R and develops open-source tools for sustainable transport planning, including the Propensity to Cycle Tool (see [pct.bike](https://www.pct.bike/)), Active Travel England's [Plan tool](https://plan.activetravelengland.gov.uk), and the [Network Planning Tool for Scotland](https://npt.scot).
 
 Jakub Nowosad is an Associate Professor at Adam Mickiewicz University in Poznan, specializing in spatial analysis, geocomputation, and landscape ecology. He is co-author of Geocomputation with R and several R packages including spData.
 
