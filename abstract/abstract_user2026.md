@@ -55,7 +55,7 @@ Participants will learn to import, manipulate, and visualize geographic data thr
 
 ## Prerequisites and intended audience
 
-Participants should have basic R knowledge (e.g., data frames, functions, and indexing). A laptop with Docker installed is recommended, as a pre-built Rocker image containing R, RStudio, and all required packages will be provided; alternatively, participants may use a local installation of R and RStudio/Positron/VSCode. Familiarity with the tidyverse is helpful but not required, and no prior experience with spatial data or GIS software is assumed.
+Participants should have basic R knowledge. A laptop with Docker installed is recommended, as a pre-built Rocker image containing R, RStudio, and all required packages will be provided; alternatively, participants may use a local installation of R and RStudio/Positron/VSCode. Familiarity with the tidyverse is helpful but not required, and no prior experience with spatial data or GIS software is assumed.
 
 This course is aimed at researchers, data scientists, and practitioners who work with geographic or spatial data, as well as those who are interested in incorporating spatial analysis and visualization into their existing data science workflows across disciplines.
 
