@@ -1,0 +1,114 @@
+/*-- scss:defaults --*/
+
+// Fonts (ported from the EGU 2019 xaringan theme)
+@import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+@import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+@import url(https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700);
+
+$geocompr-blue: #2B66AB;
+$geocompr-pink: rgb(249, 38, 114);
+
+$font-family-sans-serif: "Droid Serif", "Palatino Linotype", Palatino, serif !default;
+$presentation-heading-font: "Yanone Kaffeesatz", "Droid Serif", serif !default;
+$presentation-heading-color: $geocompr-blue !default;
+$presentation-heading-font-weight: normal !default;
+$link-color: $geocompr-pink !default;
+$code-block-font-size: 0.72em !default;
+$presentation-font-size-root: 30px !default;
+
+/*-- scss:rules --*/
+
+.reveal a,
+.reveal a > code {
+  color: $geocompr-pink;
+  text-decoration: none;
+}
+
+.reveal blockquote {
+  border-left: solid 5px lightgray;
+  padding: 0.2em 1em;
+  font-style: normal;
+  box-shadow: none;
+}
+
+// Section-divider slides: plain white background, large centered blue title.
+.reveal section.section-divider h1,
+.reveal section.section-divider h2,
+.reveal section.section-divider h3 {
+  color: $geocompr-blue;
+  font-size: 2.1em;
+}
+
+// Corner logo: top-right on every slide (reveal.js default is bottom-right)
+.reveal .slide-logo {
+  top: 16px !important;
+  right: 20px !important;
+  bottom: auto !important;
+  left: auto !important;
+  height: 80px !important;
+  max-height: 80px !important;
+  width: auto !important;
+}
+
+// Utility text sizes (ported from my-theme.css)
+.large { font-size: 130%; }
+.small { font-size: 70%; }
+
+// Smaller code font helper: wrap a chunk output in ::: {.smaller-code} :::
+.smaller-code pre code { font-size: 0.6em; }
+
+.reveal .footer { color: $geocompr-blue; }
+
+// Slide number: bottom-right, muted grey (ported from the cynkra deck css)
+.reveal .slide-number {
+  bottom: 10px !important;
+  right: 12px !important;
+  top: unset !important;
+  color: #777777 !important;
+}
+
+.reveal figure figcaption { font-size: 0.6em; color: #777; }
+
+// "Rests on GDAL/GEOS/PROJ" stack diagram
+.reveal .gdal-stack {
+  margin: 0.5em auto 0.8em;
+  max-width: 90%;
+}
+.reveal .gdal-stack .stack-top {
+  background: $geocompr-blue;
+  color: #fff;
+  border-radius: 10px;
+  padding: 0.45em;
+  text-align: center;
+  font-size: 1.25em;
+  margin-bottom: 0.6em;
+}
+.reveal .gdal-stack .stack-top strong { color: #fff; }
+.reveal .gdal-stack .stack-libs {
+  display: flex;
+  gap: 0.8em;
+}
+.reveal .gdal-stack .lib-box {
+  flex: 1;
+  background: #eaf1f8;
+  border: 2px solid $geocompr-blue;
+  border-radius: 10px;
+  padding: 0.7em 0.4em;
+  text-align: center;
+}
+.reveal .gdal-stack .lib-box p { margin: 0; }
+.reveal .gdal-stack .lib-box strong {
+  color: $geocompr-blue;
+  font-size: 1.35em;
+}
+.reveal .gdal-stack .lib-box .lib-sub {
+  display: block;
+  font-size: 0.72em;
+  color: #555;
+  margin-top: 0.35em;
+}
+
+// Title slide: use the geocompr title background image
+#title-slide {
+  .title { color: $geocompr-blue; }
+}

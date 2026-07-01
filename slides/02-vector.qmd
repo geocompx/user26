@@ -1,0 +1,317 @@
+---
+title: "Geocomputation with R"
+subtitle: "Geographic vector data with sf"
+author: "Jannes Muenchow, Robin Lovelace, Jakub Nowosad"
+date: 2026-07-06
+---
+
+## Setup
+
+Slides and code: <https://github.com/geocompx/user26>
+
+```{r}
+#| eval: false
+install.packages(c("sf", "spData", "dplyr"))
+```
+
+```{r}
+library(sf)
+library(spData)   # example datasets: world, nz, nz_height, us_states
+library(dplyr)
+```
+
+## The vector data model
+
+::: {.columns}
+::: {.column width="58%"}
+::: {.incremental}
+- Discrete objects with well-defined borders.
+- Three main geometry types: **points**, **lines** and **polygons**.
+- Especially suitable for objects with sharp boundaries (lakes, roads, houses).
+- Geometries carry an **attribute table**.
+:::
+:::
+
+::: {.column width="42%"}
+![](/img/vector.png)
+:::
+:::
+
+Further reading: <https://r.geocompx.org/spatial-class#vector-data>
+
+# Simple features in R {.section-divider}
+
+## Simple features in R
+
+Simple feature access is a widely used [ISO standard](https://www.ogc.org/standard/sfa/).
+Edzer Pebesma implemented it in the **sf** package [@pebesma_simple_2018].
+
+```{r}
+library(sf)
+```
+
+`sf` automatically links to [GEOS](https://libgeos.org/),
+[GDAL](https://gdal.org/) and [PROJ](https://proj.org/).
+
+. . .
+
+```{r}
+class(nz)
+```
+
+An `sf` object is a **`data.frame`** (an S3 object) with a geometry column.
+
+## An sf object is a data frame
+
+```{r}
+nz
+```
+
+## Plotting an sf object
+
+```{r}
+#| fig-height: 4.5
+plot(nz)
+```
+
+## Plotting just the geometry
+
+```{r}
+#| fig-height: 4.5
+plot(st_geometry(nz))
+```
+
+## sf works with the tidyverse
+
+```{r}
+select(nz, Name, Population) |> head(2)
+```
+
+- **sf** works with the **tidyverse**.
+- Geometry is **just another column**.
+- The geometry column is **sticky** (kept unless dropped explicitly).
+
+## Notes on the geometry column
+
+- Each row (feature) has one geometry, which may contain multiple parts
+  (e.g. multipolygons, polygons with holes).
+
+. . .
+
+- The geometry column is a so-called **list-column**.
+
+. . .
+
+- The geometry is built from **simple** R structures (vectors, matrices, lists).
+
+## Building geometries by hand
+
+```{r}
+#| fig-height: 3.8
+# a point is a numeric vector
+p = st_point(c(1.25, 1.25))
+# a line is a matrix of >= 2 points
+l = st_linestring(matrix(c(1.5, 1.5, 1.7, 1.7), ncol = 2, byrow = TRUE))
+# a polygon is a list of matrices
+mat = matrix(c(1, 1, 1, 2, 2, 2, 2, 1, 1, 1), ncol = 2, byrow = TRUE)
+poly = st_polygon(list(mat))
+plot(poly); plot(p, pch = 16, col = "blue", cex = 2, add = TRUE)
+plot(l, col = "orange", lwd = 2, add = TRUE)
+```
+
+## Three classes: sf, sfc, sfg
+
+```{r}
+lc = st_geometry(nz)  # the geometry list-column
+class(lc)
+```
+
+. . .
+
+```{r}
+class(lc[[1]])        # a single feature geometry
+```
+
+- `sf`  — the data frame (attributes + geometry list-column)
+- `sfc` — the geometry list-column
+- `sfg` — a single feature geometry
+
+See `vignette("sf1", package = "sf")`.
+
+# Attribute operations {.section-divider}
+
+## Attribute operations
+
+`sf` objects are data frames, so they behave like any other data frame.
+
+```{r}
+dim(nz)
+```
+
+. . .
+
+```{r}
+# first 2 rows and first 2 columns
+nz[1:2, 1:2]
+```
+
+## Tidyverse verbs
+
+The one-table **dplyr** verbs work: `select()`, `filter()`, `mutate()`,
+`arrange()`, `summarise()` and `group_by()`, plus the pipe `|>`.
+
+```{r}
+nz |>
+  filter(Island == "North") |>
+  select(Name, Population) |>
+  head(2)
+```
+
+Further reading: <https://r.geocompx.org/attr#vector-attribute-manipulation>
+
+## Your turn
+
+1. Select all regions of `nz` with a `Population` greater than 200,000. Plot the
+   geometry of all regions and add your selection in another colour.
+2. Add a categorical column `pop_class` to `nz`: `"low"` for populations below
+   100,000, `"medium"` for 100,000–300,000, and `"high"` above.
+3. *Optional:* create two points of class `sfg`, and combine them into an `sf`
+   object with an `id` and a `geometry` column.
+
+# Spatial attribute operations {.section-divider}
+
+## Spatial attribute operations
+
+Spatial operations make use of the spatial relationship between features:
+
+- Spatial subsetting
+- Topological / neighbourhood relations
+- Spatial joins
+
+## Spatial subsetting
+
+```{r}
+#| fig-height: 4
+plot(st_geometry(nz))
+plot(st_geometry(nz_height), pch = 16, col = "red", add = TRUE)
+```
+
+## Spatial subsetting
+
+```{r}
+#| fig-height: 3.8
+canterbury = nz |> filter(Name == "Canterbury")
+# keep only the summits located inside Canterbury
+canterbury_height = nz_height[canterbury, ]
+plot(st_geometry(canterbury))
+plot(st_geometry(canterbury_height), pch = 16, col = "red", add = TRUE)
+```
+
+## Topological relations
+
+Subsetting implicitly used `st_intersects()`. We can call it directly — it
+returns which features intersect:
+
+```{r}
+sel = st_intersects(nz_height, canterbury, sparse = FALSE)
+head(sel)
+```
+
+. . .
+
+Other predicates: `st_disjoint()`, `st_touches()`, `st_within()`,
+`st_contains()`, ... — see `?st_intersects`.
+
+## Spatial joins
+
+Transfer attributes from one object to another based on their geometries.
+Add the region `Name` from `nz` to each summit in `nz_height`:
+
+```{r}
+join = st_join(nz_height, select(nz, Name))
+join |> select(elevation, Name) |> head(2)
+```
+
+Further reading: <https://r.geocompx.org/spatial-operations#spatial-vec>
+
+## Your turn
+
+1. Find all summits in `nz_height` that do **not** intersect the Canterbury
+   region.
+2. What happens if you spatially join the `elevation` column of `nz_height`
+   onto `nz` (i.e. `st_join(nz, nz_height)`)? How many rows result, and why?
+
+# Geometric operations {.section-divider}
+
+## Geometric operations
+
+What if we want the geometric **intersection** of two overlapping objects,
+rather than a logical vector?
+
+![](/img/venn-clip-1.png){width="85%" fig-align="center"}
+
+## Intersection and union
+
+```{r}
+#| fig-height: 3.6
+pts = st_sfc(st_point(c(0, 1)), st_point(c(1, 1)))
+circles = st_buffer(pts, dist = 1)
+x = circles[1]; y = circles[2]
+plot(st_union(x, y), border = "grey")
+plot(st_intersection(x, y), col = "lightblue", add = TRUE)
+```
+
+## Spatial aggregation (dissolving)
+
+```{r}
+#| fig-height: 3.6
+regions = us_states |>
+  group_by(REGION) |>
+  summarise(pop = sum(total_pop_15, na.rm = TRUE))
+plot(regions["pop"])
+```
+
+`summarise()` on an `sf` object dissolves the geometries per group.
+
+## Coordinate reference systems
+
+`sf` handles CRSs and reprojection through PROJ.
+
+```{r}
+st_crs(nz)$Name
+```
+
+. . .
+
+Reproject with `st_transform()` (EPSG:4326 = geographic WGS84):
+
+```{r}
+nz_wgs = st_transform(nz, crs = 4326)
+st_crs(nz_wgs)$Name
+```
+
+Further reading: <https://r.geocompx.org/reproj-geo-data>
+
+## Your turn
+
+1. Create two overlapping circles (as above) and compute **and plot** their
+   geometric intersection, then their union.
+2. Compute the average population (`total_pop_15`) for each `REGION` of
+   `us_states` and plot the result.
+3. Find the CRS of `nz`, reproject it to EPSG:4326, and plot the original next
+   to the transformed object.
+
+## Recap
+
+With `sf` objects we performed:
+
+- **Attribute** operations (data-frame / dplyr verbs)
+- **Spatial attribute** operations (subsetting, topological relations, joins)
+- **Geometric** operations (intersection, union, dissolve, reprojection)
+
+Next: **raster data with `terra`**.
+
+## References {.smaller}
+
+::: {#refs}
+:::

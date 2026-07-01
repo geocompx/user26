@@ -1,0 +1,16 @@
+# Quarto / rendered outputs — attendees compile the slides themselves
+/.quarto/
+/_site/
+/_freeze/
+**/*.quarto_ipynb
+*.html
+*_files/
+
+# R
+.Rproj.user/
+.Rhistory
+.RData
+Rplots.pdf
+
+# Claude Code local tooling config
+.claude/

@@ -1,0 +1,34 @@
+---
+title: "Geocomputation with R"
+subtitle: "useR! 2026 — hands-on tutorial"
+format:
+  html:
+    toc: true
+---
+
+Welcome to the **Geocomputation with R** tutorial at useR! 2026.
+The tutorial is presented by Jannes Muenchow, Robin Lovelace and Jakub Nowosad,
+authors of the book [*Geocomputation with R*](https://r.geocompx.org/) (2nd edition).
+
+## Slides
+
+- [1 · Introduction](slides/01-intro.qmd)
+- [2 · Vector data with **sf**](slides/02-vector.qmd)
+- [3 · Raster data with **terra**](slides/03-raster.qmd)
+- 4 · Visualization with **tmap** *(coming soon)*
+- [5 · Bonus: Bridges to GIS with **qgisprocess**](slides/05-qgisprocess.qmd) *(needs the `qgis` Docker image)*
+
+## Exercise solutions
+
+- [`solutions/02-vector-solution.R`](solutions/02-vector-solution.R)
+- [`solutions/03-raster-solution.R`](solutions/03-raster-solution.R)
+
+## Setup
+
+A pre-built Docker image containing R, RStudio and all required packages will be
+provided. Alternatively, install the packages into a local R (≥ 4.3) session:
+
+```r
+install.packages(c("sf", "terra", "tmap", "spData",
+                   "dplyr", "leaflet", "mapview"))
+```

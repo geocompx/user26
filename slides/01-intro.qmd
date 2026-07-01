@@ -1,0 +1,452 @@
+---
+title: "Geocomputation with R"
+subtitle: "Introduction"
+author: "Jannes Muenchow, Robin Lovelace, Jakub Nowosad"
+date: 2026-07-06
+---
+
+## Who we are
+
+::: {.columns}
+::: {.column width="62%"}
+**Welcome** to our tutorial!
+
+We are the authors of
+[Geocomputation with R](https://r.geocompx.org/) (2nd edition).
+
+- [Robin Lovelace](https://www.robinlovelace.net/) — Professor of Transport Data
+  Science, Leeds; open-source tools for sustainable transport ([pct.bike](https://www.pct.bike/)).
+
+
+- [Jakub Nowosad](https://jakubnowosad.com/) — Associate Professor, Poznań;
+  spatial machine learning; creator of **landscapemetrics** and **supercells**.
+
+
+- [Jannes Muenchow](https://cynkra.com/) — Senior Data Scientist & DevOps Engineer at [cynkra](https://cynkra.com/); R-GIS integration, e.g., co-author of **qgisprocess**.
+:::
+
+::: {.column width="38%"}
+![](/img/cover2.png){width="80%"}
+:::
+:::
+
+## Slides, code & Docker image
+
+Everything for today is online:
+
+- **Slides & code:** <https://github.com/geocompx/user26>
+- **The book (free to read):** <https://r.geocompx.org/>
+
+. . .
+
+A **Docker image** with R, RStudio and all packages pre-installed:
+
+```sh
+docker run -e PASSWORD=pw --rm -p 8787:8787 \
+  ghcr.io/geocompx/latest
+```
+
+Then open <http://localhost:8787> (log in `rstudio` / `pw`).
+On Apple Silicon add `--platform linux/amd64`.
+
+. . .
+
+**Docker is optional.** For most exercises any IDE (RStudio / Positron /
+VS Code) with R and a few packages is enough:
+
+```r
+install.packages(c("sf", "dplyr", "terra", "tmap", "spData"))
+```
+
+More images, incl. the full QGIS stack: <https://github.com/geocompx/docker>.
+
+## Where we are from
+
+```{r}
+#| echo: false
+library(leaflet)
+popup <- c("Robin (Leeds)", "Jakub (Poznań)", "Jannes (Erlangen)")
+leaflet() |>
+  addProviderTiles("CartoDB.Positron") |>
+  addMarkers(
+    lng = c(-1.5, 16.9, 11.01),
+    lat = c(53.8, 52.4, 49.6),
+    popup = popup
+  )
+```
+
+## About the book
+
+The online home of the book: <https://r.geocompx.org/>
+
+Source code: <https://github.com/geocompx/geocompr>
+
+. . .
+
+Part of the **geocompx** project — open, reproducible geocomputation resources
+for both **R** and **Python**: <https://geocompx.org/>
+
+. . .
+
+The book is free to read online and covers everything in this tutorial in much
+more depth.
+
+## Contents of the tutorial
+
+::: {.columns}
+::: {.column width="55%"}
+::: {.incremental}
+1. Spatial **vector** data with `sf`
+2. Spatial **raster** data with `terra`
+3. **Mapping** / visualization with `tmap`
+4. *(time permitting)* an additional applied topic
+:::
+:::
+
+::: {.column width="45%"}
+![](/img/globe.png)
+:::
+:::
+
+# Some definitions {.section-divider}
+
+## What is a GIS?
+
+::: {.columns}
+::: {.column width="60%"}
+::: {.incremental}
+- A **G**eographic **I**nformation **S**ystem is a system for the analysis,
+  manipulation and visualization of geographic data [@longley_geographic_2015].
+- Six components of a GIS: software, data, procedures, hardware, people, network.
+- Typical GIS software: QGIS, SAGA-GIS, GRASS-GIS, ArcGIS Pro (commercial).
+:::
+:::
+
+::: {.column width="40%"}
+![](/img/gis_logos.png)
+:::
+:::
+
+::: {.notes}
+R was never intended to be a GIS, though it is great that we can use it as one.
+R has been designed from the beginning as an interface to other languages — later
+we can build bridges from R to GIS software.
+
+On the six components (Longley et al.): **procedures** = the methods/workflows for
+operating the GIS (broader than just spatial algorithms); **network** =
+connectivity / the Internet for sharing data and web GIS — *not* a spatial
+road/river network.
+:::
+
+## What is geocomputation?
+
+- Geocomputation
+- GIScience
+- Geographic data science
+
+. . .
+
+> GeoComputation is about ... developing relevant geo-tools within the overall
+> context of a "scientific" approach [@openshaw_geocomputation_2000].
+
+. . .
+
+About harnessing the power of modern computers to **do things** with geographic data.
+
+## GUI GIS vs geocomputation with R
+
+| Attribute            | Desktop GIS (GUI)        | R                          |
+|----------------------|--------------------------|----------------------------|
+| Emphasis             | visual interaction       | code / reproducibility     |
+| Reproducibility      | minimal                  | maximal                    |
+| Learning curve       | shallow                  | steep(er)                  |
+| Automation / scaling | difficult                | straightforward            |
+
+: {tbl-colwidths="[28,36,36]"}
+
+Further reading:
+<https://r.geocompx.org/intro.html#what-is-geocomputation>
+
+## Geographic data models
+
+- Geographic data consist of **coordinates** and corresponding **attributes**
+  (possibly with a time stamp).
+
+. . .
+
+- Geographic data are only a **simplified representation** of the world — we
+  decide what to represent, and for which purpose.
+
+. . .
+
+- Geographic data can quickly become **big**.
+
+. . .
+
+- Two data models for representing geographic data digitally: the **vector**
+  [@pebesma_simple_2018] and the **raster** [@hijmans_terra_2024] data model.
+
+## Vector vs raster
+
+::: {.columns}
+::: {.column width="50%"}
+**Vector**
+
+![](/img/vector.png){width="80%"}
+
+Points, lines, polygons — discrete objects with well-defined borders.
+:::
+
+::: {.column width="50%"}
+**Raster**
+
+![](/img/raster.png){width="80%"}
+
+A grid of cells — continuous fields (elevation, temperature, imagery).
+:::
+:::
+
+# Coordinate reference systems {.section-divider}
+
+## A CRS makes spatial data special
+
+Coordinates are just numbers — a **CRS** ties them to a place on Earth.
+
+::: {.columns}
+::: {.column width="50%"}
+**Geographic** CRS:<br>London = `c(-0.1, 51.5)` (degrees lon/lat)
+
+![](/img/vector_lonlat.png)
+:::
+
+::: {.column width="50%"}
+**Projected** CRS:<br>London = `c(530000, 180000)` (metres E/N, British National Grid)
+
+![](/img/vector_projected.png)
+:::
+:::
+
+## Geographic vs projected
+
+::: {.incremental}
+- **Geographic CRS** — longitude/latitude in **degrees** on a datum + ellipsoid
+  (e.g. **WGS 84**, EPSG:4326). Global, but a degree is not a constant distance
+  (it shrinks towards the poles).
+- **Projected CRS** — **x/y in metres** on a flat plane (e.g. **UTM**, LAEA,
+  National Grid). Needed for distances, areas and many geometry operations.
+- Flattening the round Earth **always distorts** something — like pressing an
+  **orange peel** flat, it must tear or stretch 🍊. Every projection is a
+  compromise between area, distance, shape and direction.
+:::
+
+. . .
+
+CRSs are identified by **EPSG codes** (`4326`, `3035`, …) and stored as **WKT2**.
+
+## Which CRS when?
+
+::: {.incremental}
+- **Store / share / GPS / web maps → EPSG:4326 (WGS 84)** — *one system for the
+  whole planet*: the datum GPS uses and the format most data & web maps (GeoJSON)
+  ship in, so data from different sources line up. But degrees ≠ metres.
+- **True areas** (choropleths, area statistics) → an **equal-area** projection,
+  e.g. **LAEA** (EPSG:3035) for Europe, **Equal Earth** / Mollweide globally.
+- **True distances / local analysis** → a suitable **UTM** zone (metres).
+:::
+
+. . .
+
+Common workflow: keep data in a shared CRS (4326 for interchange), and reproject
+to a projected CRS when you need true distances/areas — though **S2** now handles
+many lon/lat operations directly.
+
+## CRS in practice
+
+::: {.incremental}
+- Datasets must **share a CRS** before you can combine them.
+- Choose an appropriate **projected** CRS when measuring distances or areas.
+- In R: `st_crs()` / `st_transform()` (**sf**), `crs()` / `project()` (**terra**).
+:::
+
+. . .
+
+::: {.callout-tip}
+## CRS ≠ the math engine
+Your CRS *labels* coordinates; the **geometry engine** decides the computation —
+planar **GEOS**, spherical **S2**, or ellipsoidal. Project to metres to use fast
+**Cartesian** math; on lon/lat, S2 / ellipsoidal math is used instead.
+:::
+
+## Sidenote: geometry on a sphere (S2)
+
+::: {.incremental}
+- The old way treated lon/lat as if it were a **flat plane** (x = lon, y = lat) —
+  giving wrong distances, areas and intersections unless you projected first.
+- Since **sf 1.0** (2021), sf uses Google's **S2** engine: geometry is computed on
+  a **sphere**, so lon/lat operations are correct *without* projecting.
+- A sphere is itself only an **approximation** (Earth is an oblate ellipsoid — a
+  bumpy geoid) — but far better than pretending degrees are Cartesian, and fast.
+:::
+
+. . .
+
+Switch back to planar GEOS with `sf_use_s2(FALSE)`.
+
+## How round is your Earth?
+
+Each model trades scope for accuracy — pick to fit the task:
+
+| Model | Scope | Accuracy |
+|-------|-------|----------|
+| Flat plane (projected CRS) | local | great locally, poor far away |
+| **Sphere (S2)** | global | consistent, ~ ≤ 0.5 % off |
+| Ellipsoid (WGS 84) | global | mm–cm — gold standard for distances |
+| Geoid | global | true heights / sea level |
+
+: {tbl-colwidths="[42,16,42]"}
+
+S2 fixes planar geometry's *global* errors; for top local precision use an
+ellipsoidal calculation or a local projected CRS.
+
+# A brief history of spatial data in R {.section-divider}
+
+## Geographic analysis in ... S
+
+```{r}
+#| include: false
+if (!requireNamespace("splancs", quietly = TRUE)) {
+  install.packages("splancs", repos = "https://cloud.r-project.org")
+}
+```
+
+**splancs** [@rowlingson_splancs_1993] — point-pattern analysis code written for
+**S**, R's predecessor. 30 years on, it **still works just fine.**
+
+::: {.columns}
+::: {.column width="48%" .fragment}
+
+<br>
+```{r}
+#| eval: false
+R.version.string
+library(splancs)
+data(bodmin)
+polymap(bodmin$poly)
+pointmap(
+  as.points(bodmin),
+  add = TRUE, pch = 16,
+  col = "#2B66AB"
+)
+```
+:::
+
+::: {.column width="52%" .fragment}
+<br>
+```{r}
+#| echo: false
+#| fig-height: 4.2
+R.version.string
+library(splancs)
+data(bodmin)
+polymap(bodmin$poly)
+pointmap(
+  as.points(bodmin),
+  add = TRUE, pch = 16,
+  col = "#2B66AB"
+)
+```
+:::
+:::
+
+## The classic R-spatial stack
+
+The 2000s: a coherent set of packages established R as a serious spatial tool.
+
+- **sp** (2005) — spatial classes (`SpatialPointsDataFrame`, ...)
+- **rgdal** — bindings to GDAL/PROJ for I/O and reprojection
+- **rgeos** — bindings to GEOS for geometry operations
+- **raster** (Hijmans) — the raster data model
+
+. . .
+
+Documented in *Applied Spatial Data Analysis with R* [@bivand_applied_2013].
+
+## The modern R-spatial stack
+
+- **sf** (2016) implements the **simple features** standard, integrates with the
+  tidyverse, and links directly to GDAL / GEOS / PROJ [@pebesma_simple_2018].
+- **terra** replaces `raster` — faster, C++-based, larger-than-memory support
+  [@hijmans_terra_2024].
+- **stars** for spatiotemporal data cubes.
+
+. . .
+
+In **2023**, the classic `sp` / `rgdal` / `rgeos` packages were **retired**.
+Today, `sf` + `terra` are the standard — see also
+*Spatial Data Science* [@pebesma_spatial_2023].
+
+## It all rests on GDAL, GEOS and PROJ
+
+::::: {.gdal-stack}
+
+:::: {.stack-top}
+**sf** · **terra** — R packages
+::::
+
+:::: {.stack-libs}
+
+::: {.lib-box}
+**GDAL**
+
+[read / write data formats]{.lib-sub}
+:::
+
+::: {.lib-box}
+**GEOS**
+
+[geometry operations]{.lib-sub}
+:::
+
+::: {.lib-box}
+**PROJ**
+
+[coordinate reference systems]{.lib-sub}
+:::
+
+::::
+
+:::::
+
+The same C/C++ libraries power **QGIS**, **GRASS** and much of the geospatial
+world — R is a **bridge** to them.
+
+## Why R? (and does it really matter?)
+
+- **Reproducible research** — from raw data to statistics to maps to report,
+  all in one scripted workflow (Quarto, `renv`).
+
+. . .
+
+- A **rich spatial ecosystem** — hundreds of packages: `sf`, `terra`, `tmap`,
+  `spatstat`, `gstat`, ...
+
+. . .
+
+- A **great plotting engine** — `ggplot2` and `tmap` make publication-quality maps.
+
+. . .
+
+- Could you do this in another scripted language? **Sure** — the concepts
+  transfer, and R and Python share the same engines (GDAL / GEOS / PROJ) and
+  formats. But R does it well, so: **why not R.**
+
+## Let's get started
+
+Next up: **vector data with `sf`**.
+
+Slides and code: <https://github.com/geocompx/user26>
+
+## References {.smaller}
+
+::: {#refs}
+:::

@@ -1,0 +1,223 @@
+---
+title: "Geocomputation with R"
+subtitle: "Geographic raster data with terra"
+author: "Jannes Muenchow, Robin Lovelace, Jakub Nowosad"
+date: 2026-07-06
+---
+
+## Setup
+
+Slides and code: <https://github.com/geocompx/user26>
+
+```{r}
+#| eval: false
+install.packages(c("terra", "spData"))
+```
+
+```{r}
+library(terra)
+library(spData)
+```
+
+## The raster data model
+
+::: {.columns}
+::: {.column width="58%"}
+::: {.incremental}
+- Continuous fields represented by a grid of **cells** (pixels).
+- One (or more) attribute value per cell.
+- Suitable for continuous data without sharp borders (elevation, temperature,
+  satellite imagery).
+- Structure: a **header** (extent, resolution, nrow/ncol, CRS) plus a **matrix**
+  of values.
+:::
+:::
+
+::: {.column width="42%"}
+![](/img/raster.png)
+:::
+:::
+
+Further reading: <https://r.geocompx.org/spatial-class#raster-data>
+
+## Raster data in R: the terra package
+
+The modern raster package is **terra** (successor to `raster`, C++-based,
+faster, larger-than-memory support). Let's build a raster from scratch:
+
+```{r}
+elev = rast(nrows = 6, ncols = 6,
+            xmin = -1.5, xmax = 1.5, ymin = -1.5, ymax = 1.5,
+            vals = 1:36)
+```
+
+## A SpatRaster object
+
+```{r}
+elev
+```
+
+## Plotting a raster
+
+```{r}
+#| fig-height: 4.5
+plot(elev)
+```
+
+# Raster attribute operations {.section-divider}
+
+## Attribute subsetting
+
+A raster is a matrix, so we can subset with `[i, j]`:
+
+```{r}
+elev[1, 1]
+elev[6, 6]
+```
+
+. . .
+
+... or with a single cell number:
+
+```{r}
+elev[1]
+```
+
+Further reading: <https://r.geocompx.org/attr#raster-subsetting>
+
+## Map algebra: local operations
+
+Cell-by-cell ("local") operations. You can use:
+
+- arithmetic operators: `+`, `-`, `*`, `/`
+- logical operators: `>`, `>=`, `<`, `==`, `!`
+- functions: `abs()`, `round()`, `sqrt()`, `log()`, `exp()`, ...
+
+```{r}
+#| eval: false
+elev + 1
+elev^2
+elev / 4
+```
+
+The **NDVI** (from red and near-infrared bands) is a classic local operation.
+
+## Map algebra: focal operations
+
+A **focal** operation applies a function over a central cell **and its
+neighbours** (a moving window / kernel, typically 3×3).
+
+```{r}
+r_focal = focal(elev, w = 3, fun = "min")
+```
+
+![](/img/04_focal_example.png){width="85%" fig-align="center"}
+
+## Map algebra: zonal operations
+
+**Zonal** operations summarise values within zones defined by a second raster.
+Here: mean `elev` per soil-grain class.
+
+```{r}
+elev  = rast(system.file("raster/elev.tif",  package = "spData"))
+grain = rast(system.file("raster/grain.tif", package = "spData"))
+zonal(elev, grain, fun = "mean")
+```
+
+## Map algebra: global operations
+
+**Global** operations treat the whole raster as a single zone — e.g. summary
+statistics for the entire dataset.
+
+```{r}
+global(elev, fun = "mean")
+global(elev, fun = "sd")
+```
+
+## Your turn
+
+```{r}
+# a small elevation raster of Luxembourg, shipped with terra
+dem = rast(system.file("ex/elev.tif", package = "terra"))
+```
+
+1. Retrieve the elevation values of the 10th **row** of `dem`
+   (hint: `dem[10, ]`).
+2. Extract the `dem` values at 10 random coordinates
+   (hint: `spatSample(dem, 10, xy = TRUE)`).
+3. Compute the mean, min and max elevation of `dem` with `global()`.
+
+# Geometric operations {.section-divider}
+
+## Cropping and masking
+
+Raster–vector interaction: restrict a raster to a study area.
+
+```{r}
+#| fig-height: 3.4
+elev_lux = rast(system.file("ex/elev.tif", package = "terra"))
+lux = vect(system.file("ex/lux.shp", package = "terra"))
+diekirch = lux[lux$NAME_1 == "Diekirch", ]
+elev_masked = mask(crop(elev_lux, diekirch), diekirch)
+plot(elev_masked); plot(diekirch, add = TRUE)
+```
+
+## Extracting values at points
+
+```{r}
+pts = centroids(lux)                     # one point per district
+pts$elev = extract(elev_lux, pts)[, 2]
+head(pts$elev)
+```
+
+## Aggregation (changing resolution)
+
+```{r}
+#| fig-height: 3.4
+elev_agg = aggregate(elev, fact = 2, fun = "mean")
+par(mfrow = c(1, 2))
+plot(elev, main = "original")
+plot(elev_agg, main = "aggregated (fact = 2)")
+par(mfrow = c(1, 1))
+```
+
+Use `disagg()` to increase resolution.
+
+## Reprojecting a raster
+
+Change the CRS of a raster with `project()` (EPSG codes are accepted):
+
+```{r}
+crs(elev_lux, describe = TRUE)$name
+```
+
+. . .
+
+```{r}
+elev_proj = project(elev_lux, "EPSG:3035")   # LAEA Europe
+crs(elev_proj, describe = TRUE)$name
+```
+
+Further reading: <https://r.geocompx.org/geometry-operations#geo-ras>
+
+## Your turn
+
+1. Decrease the resolution of `dem` by a factor of 5 (`aggregate()`), and plot
+   the result.
+2. Reproject `dem` to LAEA Europe (EPSG:3035) and plot it next to the original.
+3. Crop **and** mask `elev_lux` to the "Grevenmacher" district of `lux`. What is
+   the difference between `crop()` and `mask()`?
+
+## Recap
+
+With `terra` `SpatRaster` objects we covered:
+
+- **Attribute** operations (subsetting, map algebra: local/focal/zonal/global)
+- **Geometric** operations (crop, mask, extract, aggregate, reproject)
+
+Next: **visualization with `tmap`**.
+
+## References {.smaller}
+
+::: {#refs}
+:::

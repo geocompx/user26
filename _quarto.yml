@@ -1,0 +1,29 @@
+project:
+  title: "Geocomputation with R — useR! 2026"
+
+# Shared defaults for all reveal.js decks in slides/
+format:
+  revealjs:
+    theme: [default, custom.scss]
+    embed-resources: true       # self-contained, portable single-file decks
+    slide-number: c
+    date-format: "D MMMM YYYY"
+    chalkboard: false
+    incremental: false
+    code-line-numbers: true
+    highlight-style: github
+    code-overflow: wrap
+    fig-align: center
+    footer: "useR! 2026 · Geocomputation with R · [r.geocompx.org](https://r.geocompx.org/)"
+    logo: ../img/geocompr_hex.png
+    logo-link: https://r.geocompx.org/
+    width: 1050
+    height: 790
+
+execute:
+  echo: true
+  warning: false
+  message: false
+  freeze: auto
+
+bibliography: references.bib

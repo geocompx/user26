@@ -1,0 +1,52 @@
+// VS Code Dev Container for the useR! 2026 "Geocomputation with R" tutorial.
+// Uses ghcr.io/geocompx/latest, which bundles R, RStudio, Quarto and the full
+// geocompx spatial stack (sf, terra, tmap, spData, spDataLarge, leaflet, ...).
+// Fuller variants (e.g. the QGIS image) live at https://github.com/geocompx/docker.
+//
+// The image is amd64-only; on Apple Silicon OrbStack runs it under Rosetta.
+// VS Code UI stays native; only R runs in the container.
+//
+// Usage: Cmd+Shift+P -> `Dev Containers: Reopen in Container`.
+{
+  "name": "geocompr-user26",
+  "image": "ghcr.io/geocompx/latest",
+  "runArgs": [
+    "--platform", "linux/amd64",
+    "-p", "8787:8787"
+  ],
+  "remoteUser": "rstudio",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/rstudio/user26,type=bind",
+  "workspaceFolder": "/home/rstudio/user26",
+  "containerEnv": {
+    "XDG_RUNTIME_DIR": "/tmp/runtime-rstudio"
+  },
+  // installs httpgd (in-VS-Code plot pane) + splancs (historic S-era demo) on create
+  "postCreateCommand": "Rscript -e \"install.packages(c('httpgd', 'splancs'), repos = 'https://cloud.r-project.org')\"",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "reditorsupport.r",
+        "rdebugger.r-debugger",
+        "quarto.quarto"
+      ],
+      "settings": {
+        "r.rterm.linux": "/usr/local/bin/R",
+        "r.bracketedPaste": true,
+        "r.sessionWatcher": true,
+        "r.plot.useHttpgd": true,
+        "[r]": {
+          "editor.formatOnSave": true,
+          "editor.formatOnPaste": true
+        },
+        "[quarto]": {
+          "editor.formatOnSave": true
+        },
+        "editor.rulers": [80],
+        "editor.tabSize": 2,
+        "editor.wordWrap": "on",
+        "editor.minimap.enabled": false,
+        "files.trimTrailingWhitespace": true
+      }
+    }
+  }
+}

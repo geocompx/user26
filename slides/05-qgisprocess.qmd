@@ -1,0 +1,127 @@
+---
+title: "Geocomputation with R"
+subtitle: "Bridges to GIS software — qgisprocess"
+author: "Jannes Muenchow, Robin Lovelace, Jakub Nowosad"
+date: 2026-07-06
+---
+
+## Bonus: bridges to GIS software {.section-divider}
+
+::: {.callout-note}
+This topic needs the **qgis** Docker image
+(`ghcr.io/geocompx/qgis`), not `latest` — it ships QGIS + `qgisprocess`.
+:::
+
+## Why bridge R to a GIS?
+
+::: {.columns}
+::: {.column width="58%"}
+R is already a capable GIS — but dedicated GIS expose **hundreds of
+geoalgorithms** R doesn't have:
+
+::: {.incremental}
+- terrain & hydrology (slope, hillshade, catchment area, wetness index)
+- LiDAR / point-cloud processing
+- specialized vector overlays
+:::
+
+R **originated as an interface language** [@bivand_applied_2013] — so it's a
+natural front-end to that toolbox.
+:::
+
+::: {.column width="42%"}
+![](/img/r_qgis_puzzle.png)
+:::
+:::
+
+## The R–GIS bridges
+
+- **qgisprocess** → QGIS (successor to `RQGIS`) — our focus today
+- **rgrass** → GRASS GIS (direct)
+- **Rsagacmd** → SAGA (direct)
+
+. . .
+
+`qgis_process` is a **unified interface** to native QGIS, **GDAL**, and
+**GRASS** (once enabled) — 300+ algorithms, 1000+ with providers.
+
+. . .
+
+Heads-up: the **SAGA provider was dropped from recent QGIS**, so SAGA is *not*
+reachable via `qgisprocess` — use **Rsagacmd** directly for SAGA tools.
+
+## Getting started
+
+```{r}
+#| eval: false
+library(qgisprocess)
+#> QGIS version: 3.44.11-Solothurn
+
+# which providers/plugins are available?
+qgis_plugins()
+
+# GRASS ships disabled — enable it once
+qgis_enable_plugins("grassprovider", quiet = TRUE)
+
+qgis_providers()   # gdal, grass, qgis, native, 3d + algorithm counts
+```
+
+## Find and inspect an algorithm
+
+Let's compute a **topographic wetness index (TWI)** — *where does water
+accumulate?* It's high in flat, valley-bottom cells with a large upslope
+catchment and low on steep ridges (`TWI = ln(upslope area / tan(slope))`). A
+classic terrain attribute for hydrology and landslide studies — *not* in base
+`terra`.
+
+```{r}
+#| eval: false
+qgis_search_algorithms("watershed")
+#> provider  algorithm          algorithm_title
+#> grass     grass:r.watershed  r.watershed
+
+# what arguments and outputs does it have?
+qgis_show_help("grass:r.watershed")
+```
+
+## Run it — from R, on an R object
+
+```{r}
+#| eval: false
+library(terra)
+elev <- rast(system.file("ex/elev.tif", package = "terra"))
+
+res <- qgis_run_algorithm(
+  "grass:r.watershed",
+  elevation = elev, threshold = 100
+)
+
+# 'tci' = topographic convergence (wetness) index
+twi <- qgis_as_terra(res$tci)
+plot(twi, col = hcl.colors(50, "Blues", rev = TRUE))
+```
+
+## Result: topographic wetness index
+
+![Wetness index (`grass:r.watershed`, `tci`) — high values trace the drainage network](/img/qgis_wetness.png){width="50%"}
+
+`sf`/`terra` objects go in, results come back as `sf`/`terra` — the GIS is just
+another function call in a reproducible R workflow.
+
+## Recap
+
+- **qgisprocess** turns 1000+ GIS geoalgorithms into ordinary R function calls.
+- Inputs/outputs are `sf`/`terra` objects — fully scriptable and reproducible.
+- Enable providers (e.g. `grassprovider`) to unlock GRASS algorithms.
+
+<br>
+
+Further reading:
+
+- Geocomputation with R — [*Bridges to GIS software*](https://r.geocompx.org/gis)
+- [`qgisprocess` documentation](https://r-spatial.github.io/qgisprocess/)
+
+## References {.smaller}
+
+::: {#refs}
+:::
