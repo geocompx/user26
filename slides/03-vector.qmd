@@ -1,7 +1,7 @@
 ---
 title: "Geocomputation with R"
 subtitle: "Geographic vector data with sf"
-author: "Jannes Muenchow, Robin Lovelace, Jakub Nowosad"
+author: "Jannes Muenchow, Jakub Nowosad"
 date: 2026-07-06
 ---
 
@@ -16,7 +16,7 @@ install.packages(c("sf", "spData", "dplyr"))
 
 ```{r}
 library(sf)
-library(spData)   # example datasets: world, nz, nz_height, us_states
+library(spData) # example datasets: world, nz, nz_height, us_states
 library(dplyr)
 ```
 
@@ -109,27 +109,28 @@ select(nz, Name, Population) |> head(2)
 ```{r}
 #| fig-height: 3.8
 # a point is a numeric vector
-p = st_point(c(1.25, 1.25))
+p <- st_point(c(1.25, 1.25))
 # a line is a matrix of >= 2 points
-l = st_linestring(matrix(c(1.5, 1.5, 1.7, 1.7), ncol = 2, byrow = TRUE))
+l <- st_linestring(matrix(c(1.5, 1.5, 1.7, 1.7), ncol = 2, byrow = TRUE))
 # a polygon is a list of matrices
-mat = matrix(c(1, 1, 1, 2, 2, 2, 2, 1, 1, 1), ncol = 2, byrow = TRUE)
-poly = st_polygon(list(mat))
-plot(poly); plot(p, pch = 16, col = "blue", cex = 2, add = TRUE)
+mat <- matrix(c(1, 1, 1, 2, 2, 2, 2, 1, 1, 1), ncol = 2, byrow = TRUE)
+poly <- st_polygon(list(mat))
+plot(poly)
+plot(p, pch = 16, col = "blue", cex = 2, add = TRUE)
 plot(l, col = "orange", lwd = 2, add = TRUE)
 ```
 
 ## Three classes: sf, sfc, sfg
 
 ```{r}
-lc = st_geometry(nz)  # the geometry list-column
+lc <- st_geometry(nz) # the geometry list-column
 class(lc)
 ```
 
 . . .
 
 ```{r}
-class(lc[[1]])        # a single feature geometry
+class(lc[[1]]) # a single feature geometry
 ```
 
 - `sf`  — the data frame (attributes + geometry list-column)
@@ -200,9 +201,9 @@ plot(st_geometry(nz_height), pch = 16, col = "red", add = TRUE)
 
 ```{r}
 #| fig-height: 3.8
-canterbury = nz |> filter(Name == "Canterbury")
+canterbury <- nz |> filter(Name == "Canterbury")
 # keep only the summits located inside Canterbury
-canterbury_height = nz_height[canterbury, ]
+canterbury_height <- nz_height[canterbury, ]
 plot(st_geometry(canterbury))
 plot(st_geometry(canterbury_height), pch = 16, col = "red", add = TRUE)
 ```
@@ -213,7 +214,7 @@ Subsetting implicitly used `st_intersects()`. We can call it directly — it
 returns which features intersect:
 
 ```{r}
-sel = st_intersects(nz_height, canterbury, sparse = FALSE)
+sel <- st_intersects(nz_height, canterbury, sparse = FALSE)
 head(sel)
 ```
 
@@ -228,8 +229,10 @@ Transfer attributes from one object to another based on their geometries.
 Add the region `Name` from `nz` to each summit in `nz_height`:
 
 ```{r}
-join = st_join(nz_height, select(nz, Name))
-join |> select(elevation, Name) |> head(2)
+join <- st_join(nz_height, select(nz, Name))
+join |>
+  select(elevation, Name) |>
+  head(2)
 ```
 
 Further reading: <https://r.geocompx.org/spatial-operations#spatial-vec>
@@ -254,9 +257,10 @@ rather than a logical vector?
 
 ```{r}
 #| fig-height: 3.6
-pts = st_sfc(st_point(c(0, 1)), st_point(c(1, 1)))
-circles = st_buffer(pts, dist = 1)
-x = circles[1]; y = circles[2]
+pts <- st_sfc(st_point(c(0, 1)), st_point(c(1, 1)))
+circles <- st_buffer(pts, dist = 1)
+x <- circles[1]
+y <- circles[2]
 plot(st_union(x, y), border = "grey")
 plot(st_intersection(x, y), col = "lightblue", add = TRUE)
 ```
@@ -265,7 +269,7 @@ plot(st_intersection(x, y), col = "lightblue", add = TRUE)
 
 ```{r}
 #| fig-height: 3.6
-regions = us_states |>
+regions <- us_states |>
   group_by(REGION) |>
   summarise(pop = sum(total_pop_15, na.rm = TRUE))
 plot(regions["pop"])
@@ -286,7 +290,7 @@ st_crs(nz)$Name
 Reproject with `st_transform()` (EPSG:4326 = geographic WGS84):
 
 ```{r}
-nz_wgs = st_transform(nz, crs = 4326)
+nz_wgs <- st_transform(nz, crs = 4326)
 st_crs(nz_wgs)$Name
 ```
 

@@ -1,7 +1,8 @@
 // VS Code Dev Container for the useR! 2026 "Geocomputation with R" tutorial.
-// Uses ghcr.io/geocompx/latest, which bundles R, RStudio, Quarto and the full
-// geocompx spatial stack (sf, terra, tmap, spData, spDataLarge, leaflet, ...).
-// Fuller variants (e.g. the QGIS image) live at https://github.com/geocompx/docker.
+// Uses ghcr.io/geocompx/qgis, which bundles R, RStudio, Quarto and the full
+// geocompx spatial stack (sf, terra, tmap, spData, spDataLarge, leaflet, ...)
+// as well as GIS software suites. Find more geocompr images at
+// https://github.com/geocompx/docker.
 //
 // The image is amd64-only; on Apple Silicon OrbStack runs it under Rosetta.
 // VS Code UI stays native; only R runs in the container.
@@ -9,7 +10,7 @@
 // Usage: Cmd+Shift+P -> `Dev Containers: Reopen in Container`.
 {
   "name": "geocompr-user26",
-  "image": "ghcr.io/geocompx/latest",
+  "image": "ghcr.io/geocompx/qgis",
   "runArgs": [
     "--platform", "linux/amd64",
     "-p", "8787:8787"

@@ -1,7 +1,7 @@
 ---
 title: "Geocomputation with R"
 subtitle: "Introduction"
-author: "Jannes Muenchow, Robin Lovelace, Jakub Nowosad"
+author: "Jannes Muenchow, Jakub Nowosad"
 date: 2026-07-06
 ---
 
@@ -42,7 +42,7 @@ Everything for today is online:
 A **Docker image** with R, RStudio and all packages pre-installed:
 
 ```sh
-docker run -e PASSWORD=pw --rm -p 8787:8787 \
+docker run -e DISABLE_AUTH=true --rm -p 8787:8787 \
   ghcr.io/geocompx/latest
 ```
 
@@ -96,10 +96,12 @@ more depth.
 ::: {.columns}
 ::: {.column width="55%"}
 ::: {.incremental}
-1. Spatial **vector** data with `sf`
-2. Spatial **raster** data with `terra`
-3. **Mapping** / visualization with `tmap`
-4. *(time permitting)* an additional applied topic
+1. Intro - definitions and brief history of spatial R
+1. Coordinate reference systems
+1. Spatial **vector** data with `sf` [@pebesma_simple_2018]
+1. Spatial **raster** data with `terra` [@r-terra]
+1. **Mapping** / visualization with `tmap` [@tennekes_tmap_2018]
+1. *(time permitting)* R GIS bridges with `qgisprocess` [@r-qgisprocess]
 :::
 :::
 
@@ -184,7 +186,9 @@ Further reading:
 . . .
 
 - Two data models for representing geographic data digitally: the **vector**
-  [@pebesma_simple_2018] and the **raster** [@hijmans_terra_2024] data model.
+  [@pebesma_simple_2018] and the **raster** [@r-terra] data model.
+
+# Vector and raster {.section-divider}
 
 ## Vector vs raster
 
@@ -205,108 +209,6 @@ Points, lines, polygons — discrete objects with well-defined borders.
 A grid of cells — continuous fields (elevation, temperature, imagery).
 :::
 :::
-
-# Coordinate reference systems {.section-divider}
-
-## A CRS makes spatial data special
-
-Coordinates are just numbers — a **CRS** ties them to a place on Earth.
-
-::: {.columns}
-::: {.column width="50%"}
-**Geographic** CRS:<br>London = `c(-0.1, 51.5)` (degrees lon/lat)
-
-![](/img/vector_lonlat.png)
-:::
-
-::: {.column width="50%"}
-**Projected** CRS:<br>London = `c(530000, 180000)` (metres E/N, British National Grid)
-
-![](/img/vector_projected.png)
-:::
-:::
-
-## Geographic vs projected
-
-::: {.incremental}
-- **Geographic CRS** — longitude/latitude in **degrees** on a datum + ellipsoid
-  (e.g. **WGS 84**, EPSG:4326). Global, but a degree is not a constant distance
-  (it shrinks towards the poles).
-- **Projected CRS** — **x/y in metres** on a flat plane (e.g. **UTM**, LAEA,
-  National Grid). Needed for distances, areas and many geometry operations.
-- Flattening the round Earth **always distorts** something — like pressing an
-  **orange peel** flat, it must tear or stretch 🍊. Every projection is a
-  compromise between area, distance, shape and direction.
-:::
-
-. . .
-
-CRSs are identified by **EPSG codes** (`4326`, `3035`, …) and stored as **WKT2**.
-
-## Which CRS when?
-
-::: {.incremental}
-- **Store / share / GPS / web maps → EPSG:4326 (WGS 84)** — *one system for the
-  whole planet*: the datum GPS uses and the format most data & web maps (GeoJSON)
-  ship in, so data from different sources line up. But degrees ≠ metres.
-- **True areas** (choropleths, area statistics) → an **equal-area** projection,
-  e.g. **LAEA** (EPSG:3035) for Europe, **Equal Earth** / Mollweide globally.
-- **True distances / local analysis** → a suitable **UTM** zone (metres).
-:::
-
-. . .
-
-Common workflow: keep data in a shared CRS (4326 for interchange), and reproject
-to a projected CRS when you need true distances/areas — though **S2** now handles
-many lon/lat operations directly.
-
-## CRS in practice
-
-::: {.incremental}
-- Datasets must **share a CRS** before you can combine them.
-- Choose an appropriate **projected** CRS when measuring distances or areas.
-- In R: `st_crs()` / `st_transform()` (**sf**), `crs()` / `project()` (**terra**).
-:::
-
-. . .
-
-::: {.callout-tip}
-## CRS ≠ the math engine
-Your CRS *labels* coordinates; the **geometry engine** decides the computation —
-planar **GEOS**, spherical **S2**, or ellipsoidal. Project to metres to use fast
-**Cartesian** math; on lon/lat, S2 / ellipsoidal math is used instead.
-:::
-
-## Sidenote: geometry on a sphere (S2)
-
-::: {.incremental}
-- The old way treated lon/lat as if it were a **flat plane** (x = lon, y = lat) —
-  giving wrong distances, areas and intersections unless you projected first.
-- Since **sf 1.0** (2021), sf uses Google's **S2** engine: geometry is computed on
-  a **sphere**, so lon/lat operations are correct *without* projecting.
-- A sphere is itself only an **approximation** (Earth is an oblate ellipsoid — a
-  bumpy geoid) — but far better than pretending degrees are Cartesian, and fast.
-:::
-
-. . .
-
-Switch back to planar GEOS with `sf_use_s2(FALSE)`.
-
-## How round is your Earth?
-
-Each model trades scope for accuracy — pick to fit the task:
-
-| Model | Scope | Accuracy |
-|-------|-------|----------|
-| Flat plane (projected CRS) | local | great locally, poor far away |
-| **Sphere (S2)** | global | consistent, ~ ≤ 0.5 % off |
-| Ellipsoid (WGS 84) | global | mm–cm — gold standard for distances |
-| Geoid | global | true heights / sea level |
-
-: {tbl-colwidths="[42,16,42]"}
-
-S2 fixes planar geometry's *global* errors; for top local precision use an
-ellipsoidal calculation or a local projected CRS.
 
 # A brief history of spatial data in R {.section-divider}
 
@@ -362,10 +264,10 @@ pointmap(
 
 The 2000s: a coherent set of packages established R as a serious spatial tool.
 
-- **sp** (2005) — spatial classes (`SpatialPointsDataFrame`, ...)
-- **rgdal** — bindings to GDAL/PROJ for I/O and reprojection
-- **rgeos** — bindings to GEOS for geometry operations
-- **raster** (Hijmans) — the raster data model
+- **sp** (2005) — spatial classes (`SpatialPointsDataFrame`, ..., @bivand_applied_2013).
+- **rgdal** — bindings to GDAL/PROJ for I/O and reprojection [@r-rgdal].
+- **rgeos** — bindings to GEOS for geometry operations [@r-rgeos].
+- **raster** (2010) — the raster data model [@r-raster].
 
 . . .
 
@@ -376,14 +278,13 @@ Documented in *Applied Spatial Data Analysis with R* [@bivand_applied_2013].
 - **sf** (2016) implements the **simple features** standard, integrates with the
   tidyverse, and links directly to GDAL / GEOS / PROJ [@pebesma_simple_2018].
 - **terra** replaces `raster` — faster, C++-based, larger-than-memory support
-  [@hijmans_terra_2024].
+  [@r-terra]
 - **stars** for spatiotemporal data cubes.
 
 . . .
 
-In **2023**, the classic `sp` / `rgdal` / `rgeos` packages were **retired**.
-Today, `sf` + `terra` are the standard — see also
-*Spatial Data Science* [@pebesma_spatial_2023].
+Today, `sf` + `terra` are the standard — see also *Spatial Data Science* [@pebesma_spatial_2023].
+In **2023**, the classic `maptools` / `rgdal` / `rgeos` / `rgrass7` packages were **retired**.
 
 ## It all rests on GDAL, GEOS and PROJ
 
@@ -418,7 +319,7 @@ Today, `sf` + `terra` are the standard — see also
 :::::
 
 The same C/C++ libraries power **QGIS**, **GRASS** and much of the geospatial
-world — R is a **bridge** to them.
+world.
 
 ## Why R? (and does it really matter?)
 
@@ -442,7 +343,7 @@ world — R is a **bridge** to them.
 
 ## Let's get started
 
-Next up: **vector data with `sf`**.
+Next up: **coordinate reference systems**.
 
 Slides and code: <https://github.com/geocompx/user26>
 

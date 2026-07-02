@@ -1,7 +1,7 @@
 ---
 title: "Geocomputation with R"
 subtitle: "Geographic raster data with terra"
-author: "Jannes Muenchow, Robin Lovelace, Jakub Nowosad"
+author: "Jannes Muenchow, Jakub Nowosad"
 date: 2026-07-06
 ---
 
@@ -46,9 +46,11 @@ The modern raster package is **terra** (successor to `raster`, C++-based,
 faster, larger-than-memory support). Let's build a raster from scratch:
 
 ```{r}
-elev = rast(nrows = 6, ncols = 6,
-            xmin = -1.5, xmax = 1.5, ymin = -1.5, ymax = 1.5,
-            vals = 1:36)
+elev <- rast(
+  nrows = 6, ncols = 6,
+  xmin = -1.5, xmax = 1.5, ymin = -1.5, ymax = 1.5,
+  vals = 1:36
+)
 ```
 
 ## A SpatRaster object
@@ -108,7 +110,7 @@ A **focal** operation applies a function over a central cell **and its
 neighbours** (a moving window / kernel, typically 3×3).
 
 ```{r}
-r_focal = focal(elev, w = 3, fun = "min")
+r_focal <- focal(elev, w = 3, fun = "min")
 ```
 
 ![](/img/04_focal_example.png){width="85%" fig-align="center"}
@@ -119,8 +121,8 @@ r_focal = focal(elev, w = 3, fun = "min")
 Here: mean `elev` per soil-grain class.
 
 ```{r}
-elev  = rast(system.file("raster/elev.tif",  package = "spData"))
-grain = rast(system.file("raster/grain.tif", package = "spData"))
+elev <- rast(system.file("raster/elev.tif", package = "spData"))
+grain <- rast(system.file("raster/grain.tif", package = "spData"))
 zonal(elev, grain, fun = "mean")
 ```
 
@@ -138,7 +140,7 @@ global(elev, fun = "sd")
 
 ```{r}
 # a small elevation raster of Luxembourg, shipped with terra
-dem = rast(system.file("ex/elev.tif", package = "terra"))
+dem <- rast(system.file("ex/elev.tif", package = "terra"))
 ```
 
 1. Retrieve the elevation values of the 10th **row** of `dem`
@@ -155,18 +157,19 @@ Raster–vector interaction: restrict a raster to a study area.
 
 ```{r}
 #| fig-height: 3.4
-elev_lux = rast(system.file("ex/elev.tif", package = "terra"))
-lux = vect(system.file("ex/lux.shp", package = "terra"))
-diekirch = lux[lux$NAME_1 == "Diekirch", ]
-elev_masked = mask(crop(elev_lux, diekirch), diekirch)
-plot(elev_masked); plot(diekirch, add = TRUE)
+elev_lux <- rast(system.file("ex/elev.tif", package = "terra"))
+lux <- vect(system.file("ex/lux.shp", package = "terra"))
+diekirch <- lux[lux$NAME_1 == "Diekirch", ]
+elev_masked <- mask(crop(elev_lux, diekirch), diekirch)
+plot(elev_masked)
+plot(diekirch, add = TRUE)
 ```
 
 ## Extracting values at points
 
 ```{r}
-pts = centroids(lux)                     # one point per district
-pts$elev = extract(elev_lux, pts)[, 2]
+pts <- centroids(lux) # one point per district
+pts$elev <- extract(elev_lux, pts)[, 2]
 head(pts$elev)
 ```
 
@@ -174,7 +177,7 @@ head(pts$elev)
 
 ```{r}
 #| fig-height: 3.4
-elev_agg = aggregate(elev, fact = 2, fun = "mean")
+elev_agg <- aggregate(elev, fact = 2, fun = "mean")
 par(mfrow = c(1, 2))
 plot(elev, main = "original")
 plot(elev_agg, main = "aggregated (fact = 2)")
@@ -194,7 +197,7 @@ crs(elev_lux, describe = TRUE)$name
 . . .
 
 ```{r}
-elev_proj = project(elev_lux, "EPSG:3035")   # LAEA Europe
+elev_proj <- project(elev_lux, "EPSG:3035") # LAEA Europe
 crs(elev_proj, describe = TRUE)$name
 ```
 

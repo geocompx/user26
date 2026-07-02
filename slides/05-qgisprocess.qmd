@@ -1,7 +1,7 @@
 ---
 title: "Geocomputation with R"
 subtitle: "Bridges to GIS software — qgisprocess"
-author: "Jannes Muenchow, Robin Lovelace, Jakub Nowosad"
+author: "Jannes Muenchow, Jakub Nowosad"
 date: 2026-07-06
 ---
 
@@ -63,7 +63,7 @@ qgis_plugins()
 # GRASS ships disabled — enable it once
 qgis_enable_plugins("grassprovider", quiet = TRUE)
 
-qgis_providers()   # gdal, grass, qgis, native, 3d + algorithm counts
+qgis_providers() # gdal, grass, qgis, native, 3d + algorithm counts
 ```
 
 ## Find and inspect an algorithm

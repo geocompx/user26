@@ -11,10 +11,14 @@ The slides are built with [Quarto](https://quarto.org/) reveal.js
 
 - `slides/` — reveal.js decks (`.qmd`):
   - `01-intro.qmd` — introduction, definitions and a brief spatial history
-  - `02-vector.qmd` — vector data with the `sf` package
-  - `03-raster.qmd` — raster data with the `terra` package
-  - `04-viz.qmd` — visualization with `tmap` *(added later)*
+  - `02-crs.qmd` — coordinate reference systems
+  - `03-vector.qmd` — vector data with the `sf` package
+  - `04-raster.qmd` — raster data with the `terra` package
+  - `05-qgisprocess.qmd` — bridges to GIS software with `qgisprocess` *(bonus)*
 - `solutions/` — R scripts with exercise solutions
+  - `02-crs-solution.R` — CRS exercise solution
+  - `03-vector-solution.R` — vector exercise solution
+  - `04-raster-solution.R` — raster exercise solution
 - `img/` — images used in the slides
 - `custom.scss` — reveal.js theme
 - `references.bib` — bibliography

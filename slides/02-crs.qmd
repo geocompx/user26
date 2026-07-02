@@ -1,0 +1,106 @@
+---
+title: "Coordinate reference systems"
+subtitle: "Why spatial data is special"
+author: "Jannes Muenchow, Jakub Nowosad"
+date: 2026-07-06
+---
+
+## Coordinate reference systems
+
+Coordinates are just numbers. A **CRS** ties them to a place on Earth.
+
+::: {.columns}
+::: {.column width="50%"}
+**Geographic** CRS:<br>London = `c(-0.1, 51.5)` (degrees lon/lat)
+
+![](/img/vector_lonlat.png)
+:::
+
+::: {.column width="50%"}
+**Projected** CRS:<br>London = `c(530000, 180000)` (metres E/N, British National Grid)
+
+![](/img/vector_projected.png)
+:::
+:::
+
+## Geographic vs projected
+
+::: {.columns}
+::: {.column width="55%"}
+::: {.incremental}
+- **Geographic CRS** — longitude/latitude in **degrees** on a datum + ellipsoid.
+  Example: **WGS 84**, EPSG:4326. Global, but a degree is not a constant distance.
+- **Projected CRS** — **x/y in metres** on a flat plane. Example: **UTM**, LAEA,
+  National Grid. Needed for distances, areas and many geometry operations.
+- Flattening the round Earth **always distorts** something. Every projection is a
+  compromise between area, distance, shape and direction.
+
+CRSs are identified by **EPSG codes** and stored as **WKT2**.
+:::
+:::
+
+::: {.column width="45%"}
+![](/img/goode_homolosine.jpg){fig-alt="World map in Goode's homolosine projection, resembling a peeled orange laid flat"}
+:::
+:::
+
+## Which CRS when?
+
+::: {.columns}
+::: {.column width="50%"}
+- **Store / share / GPS / web maps** → **EPSG:4326 (WGS 84)**
+- **True areas** → an **equal-area** projection, e.g. **LAEA** (EPSG:3035) for Europe
+- **True distances / local analysis** → a suitable **UTM** zone (metres)
+:::
+
+::: {.column width="50%"}
+![](/img/tissot_mercator.svg){width=70% fig-alt="Mercator projection with Tissot indicatrices showing area distortion"}
+
+![](/img/tissot_mollweide.svg){width=70% fig-alt="Mollweide equal-area projection with uniform Tissot indicatrices"}
+
+*Tissot's indicatrices. Eric Gaba, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)*
+:::
+:::
+
+## CRS in practice
+
+::: {.incremental}
+- Datasets must **share a CRS** before you combine them.
+- Choose an appropriate **projected** CRS when measuring distances or areas.
+- In R: `st_crs()` / `st_transform()` (**sf**), `crs()` / `project()` (**terra**).
+:::
+
+. . .
+
+::: {.callout-tip}
+## CRS ≠ the math engine
+Your CRS *labels* coordinates; the **geometry engine** decides the computation.
+Project to metres to use fast **Cartesian** math; on lon/lat, spherical or ellipsoidal math is used instead.
+:::
+
+## Sidenote: geometry on a sphere (S2)
+
+::: {.incremental}
+- The old way treated lon/lat as if it were a **flat plane** — giving wrong distances, areas and intersections unless you projected first.
+- Since **sf 1.0**, sf uses Google's **S2** engine: geometry is computed on a **sphere**, so lon/lat operations are correct *without* projecting.
+- A sphere is still an approximation of Earth, but far better than pretending degrees are Cartesian.
+:::
+
+. . .
+
+Switch back to planar GEOS with `sf_use_s2(FALSE)`.
+
+## CRS exercise
+
+Use the `nz` dataset from **spData**.
+
+1. Find its CRS with `st_crs(nz)`.
+2. Is it **geographic** or **projected**?
+3. Reproject it to **EPSG:4326** and plot the result.
+
+::: {.callout-tip}
+## Hint
+If the coordinate values are in metres, the CRS is probably projected.
+:::
+
+Solution script: [`solutions/02-crs-solution.R`](../solutions/02-crs-solution.R)
