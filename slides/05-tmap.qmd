@@ -1,0 +1,147 @@
+---
+title: "Geocomputation with R"
+subtitle: "Making maps with tmap"
+author: "Jannes Muenchow, Jakub Nowosad"
+date: 2026-07-06
+---
+
+## Setup
+
+Slides and code: <https://github.com/geocompx/user26>
+
+```{r}
+#| eval: false
+install.packages(c("sf", "terra", "dplyr", "spData", "tmap"))
+```
+
+```{r}
+library(sf)
+library(terra)
+library(dplyr)
+library(spData)
+library(tmap)
+```
+
+## R-spatial visualization ecosystem
+
+:::: {.columns}
+::: {.column width="35%" .fragment .semi-fade-out  fragment-index=1}
+
+![](/img/collaborate.png)
+
+R has [a long history](https://r.geocompx.org/intro#history-of-r-spatial) of supporting spatial data processing, analysis, and visualization
+
+:::
+
+::: {.column width="65%" .fragment .fade-in  fragment-index=1}
+
+**Spatial visualization packages include:**
+
+- **rasterVis**, **mapsf**, **ggplot2** and **ggspatial**, **tidyterra**, **rayshader** -- static visualizations
+- **leaflet**, **mapview**, **mapdeck**, **leafgl**, **mapgl** -- interactive visualizations
+- **tmap** -- both
+
+![](/img/maps.png)
+
+:::
+
+::::
+
+## Anatomy of a {tmap} map
+
+```{r}
+#| fig-height: 10
+#| output-location: column
+tm_shape(nz) +
+  tm_polygons(
+    fill = "Median_income",
+    fill.scale = tm_scale(
+      values = "viridis"
+      ),
+    fill.legend = tm_legend(
+      title = "Median income",
+      position = tm_pos_out(
+         "left", "center"
+         )
+    ),
+    lwd = 0.5
+  ) +
+  tm_scalebar(
+   position = c("right", "bottom")
+   ) +
+  tm_layout(bg.color = "lightblue")
+```
+
+# Code examples
+
+File: [`code/map_code1.R`](../code/map_code1.R)
+
+(Bonus) file: [`code/map_code2.R`](../code/map_code2.R)
+
+## Exercises
+
+Run the code below:
+
+```{r, message=FALSE}
+library(sf); library(tmap); library(spData)
+```
+
+The `nz` object contains a few attributes of regions within New Zealand.
+
+1. Run the code above. Create a simple map of the `nz` data.
+2. Improve the map by coloring regions based on their median income (`Median_income`). Improve the legend title. Try different color palettes (hint: use the `fill.scale` argument). Change border width. Put the legend on the left side.
+3. Improve the map further by adding a title, scale bar, north arrow, and text annotation. Adjust the positions of map elements.
+4. Switch to `tmap_mode("view")` and recreate the map from step 3. What are the pros and cons of static vs interactive maps?
+5. Save the map as `.png` and `.svg` in plot mode, and as `.html` in view mode. (Remember to switch back with `tmap_mode("plot")` for static outputs.)
+
+## Advanced {tmap}
+
+:::: columns
+::: column
+Website: <https://r-tmap.github.io/tmap/>
+
+Book: <https://tmap.geocompx.org/>
+
+**Other features:**
+
+- Many other visual variables, e.g., `tm_lines()` and `tm_raster()`
+- More complex scales for various data types
+- Including charts (e.g., histograms) in the legend
+- Using basemaps in both static and interactive modes
+- Extending {tmap} to other layer types (e.g., [`tm_cartogram()`](https://r-tmap.github.io/tmap.cartogram/articles/cartograms)) or modes, e.g., [`"deck"`](https://r-tmap.github.io/tmap/articles/adv_extensions)
+:::
+
+::: column
+
+![](/img/tm_cartogram.png)
+![](/img/deckgl.png)
+
+:::
+::::
+
+## Other tools {visibility="hidden"}
+
+:::: {.columns}
+::: {.column width="50%" .fragment .semi-fade-out  fragment-index=1}
+
+{leafgl}: <https://r-spatial.github.io/leafgl/>
+
+Allows rendering large datasets (millions of objects) on Leaflet maps by utilizing WebGL technology
+
+![](/img/leafgl.webp)
+
+:::
+
+::: {.column width="50%" .fragment .fade-in  fragment-index=1}
+
+{mapgl}: <https://walker-data.com/mapgl/>
+
+An interface to Mapbox GL JS (API key required) and Maplibre GL JS (no API key required).
+
+Provides support to various map layers (including rasters and heatmaps); allows to create [story maps](https://walker-data.com/mapgl/articles/story-maps.html).
+
+![](/img/dallas.webp)
+
+:::
+
+::::
