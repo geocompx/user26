@@ -16,14 +16,15 @@ authors of the book [*Geocomputation with R*](https://r.geocompx.org/) (2nd edit
 - [2 · Coordinate reference systems](slides/02-crs.qmd)
 - [3 · Vector data with **sf**](slides/03-vector.qmd)
 - [4 · Raster data with **terra**](slides/04-raster.qmd)
-- 4 · Visualization with **tmap** *(coming soon)*
-- [5 · Bonus: Bridges to GIS with **qgisprocess**](slides/05-qgisprocess.qmd) *(needs the `qgis` Docker image)*
+- [5 · Visualization with **tmap**](slides/05-tmap.qmd)
+- [6 · Bonus: Bridges to GIS with **qgisprocess**](slides/06-qgisprocess.qmd) *(needs the `qgis` Docker image)*
 
 ## Exercise solutions
 
 - [`solutions/02-crs-solution.R`](solutions/02-crs-solution.R)
 - [`solutions/03-vector-solution.R`](solutions/03-vector-solution.R)
 - [`solutions/04-raster-solution.R`](solutions/04-raster-solution.R)
+- [`solutions/05-tmap-solution.R`](solutions/05-tmap-solution.R)
 
 ## Setup
 
