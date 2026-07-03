@@ -58,6 +58,8 @@ packages inside the `ghcr.io/geocompx/latest` image, with the R and Quarto
 extensions pre-configured. Then use `quarto preview slides/01-intro.qmd` from the
 integrated terminal.
 
+Plot pane troubleshooting notes are in `.devcontainer/README.md`.
+
 ## Running RStudio (for attendees)
 
 Attendees don't render slides — they run the exercise code in the RStudio IDE the

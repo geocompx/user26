@@ -121,10 +121,34 @@ r_focal <- focal(elev, w = 3, fun = "min")
 Here: mean `elev` per soil-grain class.
 
 ```{r}
+#| eval: false
 elev <- rast(system.file("raster/elev.tif", package = "spData"))
 grain <- rast(system.file("raster/grain.tif", package = "spData"))
+par(mfrow = c(1, 2))
+plot(elev)
+plot(grain)
+```
+
+
+
+##
+
+```{r}
+#| echo: false
+elev <- rast(system.file("raster/elev.tif", package = "spData"))
+grain <- rast(system.file("raster/grain.tif", package = "spData"))
+par(mfrow = c(1, 2))
+plot(elev)
+plot(grain)
+```
+
+. . .
+
+```{r}
+#| eval: true
 zonal(elev, grain, fun = "mean")
 ```
+
 
 ## Map algebra: global operations
 
@@ -138,16 +162,10 @@ global(elev, fun = "sd")
 
 ## Your turn
 
-```{r}
-# a small elevation raster of Luxembourg, shipped with terra
-dem <- rast(system.file("ex/elev.tif", package = "terra"))
-```
-
-1. Retrieve the elevation values of the 10th **row** of `dem`
-   (hint: `dem[10, ]`).
-2. Extract the `dem` values at 10 random coordinates
-   (hint: `spatSample(dem, 10, xy = TRUE)`).
-3. Compute the mean, min and max elevation of `dem` with `global()`.
+1. Get the elevation raster of Luxembourg from the `terra` package (`dem <- rast(system.file("ex/elev.tif", package = "terra"))`) and plot it.
+1. Retrieve the elevation values of the 10th **row** of `dem`.
+1. Extract the `dem` values at 10 random coordinates.
+1. Compute the mean, min and max elevation of `dem`.
 
 # Geometric operations {.section-divider}
 

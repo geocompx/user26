@@ -10,10 +10,12 @@
 // Usage: Cmd+Shift+P -> `Dev Containers: Reopen in Container`.
 {
   "name": "geocompr-user26",
-  "image": "ghcr.io/geocompx/qgis",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   "runArgs": [
     "--platform", "linux/amd64",
-    "-p", "8787:8787"
+    "-p", "8787:8787", "-e ROOT=true", "-e DISABLE_AUTH=true"
   ],
   "remoteUser": "rstudio",
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/rstudio/user26,type=bind",
@@ -21,8 +23,10 @@
   "containerEnv": {
     "XDG_RUNTIME_DIR": "/tmp/runtime-rstudio"
   },
-  // installs httpgd (in-VS-Code plot pane) + splancs (historic S-era demo) on create
-  "postCreateCommand": "Rscript -e \"install.packages(c('httpgd', 'splancs'), repos = 'https://cloud.r-project.org')\"",
+  // installs required R watcher packages and configures VS Code session startup
+  "postCreateCommand": "bash .devcontainer/init-httpgd.sh --install",
+  // re-applies the startup hook if the home profile was reset
+  "postStartCommand": "bash .devcontainer/init-httpgd.sh",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -31,10 +35,19 @@
         "quarto.quarto"
       ],
       "settings": {
+        "r.rpath.linux": "/usr/local/bin/R",
         "r.rterm.linux": "/usr/local/bin/R",
         "r.bracketedPaste": true,
         "r.sessionWatcher": true,
-        "r.plot.useHttpgd": true,
+        "r.plot.useHttpgd": false,
+        "r.session.viewers.viewColumn": {
+          "plot": "Beside",
+          "browser": "Active",
+          "viewer": "Two",
+          "pageViewer": "Active",
+          "view": "Two",
+          "helpPanel": "Two"
+        },
         "[r]": {
           "editor.formatOnSave": true,
           "editor.formatOnPaste": true
