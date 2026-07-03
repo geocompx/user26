@@ -43,7 +43,7 @@ Further reading: <https://r.geocompx.org/spatial-class#raster-data>
 ## Raster data in R: the terra package
 
 The modern raster package is **terra** (successor to `raster`, C++-based,
-faster, larger-than-memory support). Let's build a raster from scratch:
+faster, larger-than-memory support; @r-terra). Let's build a raster from scratch:
 
 ```{r}
 elev <- rast(
@@ -172,21 +172,59 @@ global(elev, fun = "sd")
 ## Cropping and masking
 
 Raster–vector interaction: restrict a raster to a study area.
+Start with the elevation of Luxembourg and the "Diekirch" district.
+
+```{r}
+#| eval: false
+elev_lux <- rast(system.file("ex/elev.tif", package = "terra"))
+lux <- vect(system.file("ex/lux.shp", package = "terra"))
+# filter to the Diekirch district
+diekirch <- lux[lux$NAME_1 == "Diekirch", ]
+plot(elev_lux)
+plot(diekirch, add = TRUE)
+```
+
+. . .
 
 ```{r}
 #| fig-height: 3.4
+#| echo: false
 elev_lux <- rast(system.file("ex/elev.tif", package = "terra"))
 lux <- vect(system.file("ex/lux.shp", package = "terra"))
+# filter to the Diekirch district
 diekirch <- lux[lux$NAME_1 == "Diekirch", ]
-elev_masked <- mask(crop(elev_lux, diekirch), diekirch)
+plot(elev_lux)
+plot(diekirch, add = TRUE)
+```
+
+## Cropping and masking
+
+- `crop()` cuts the raster to the **bounding box** of Diekirch.
+- `mask()` sets cells **outside** the polygon to `NA`.
+
+```{r}
+#| eval: false
+elev_masked <- crop(elev_lux, diekirch) |>
+  mask(diekirch)
 plot(elev_masked)
 plot(diekirch, add = TRUE)
 ```
 
-## Extracting values at points
+. . .
 
 ```{r}
-pts <- centroids(lux) # one point per district
+#| fig-height: 3.4
+#| echo: false
+elev_masked <- crop(elev_lux, diekirch) |>
+  mask(diekirch)
+plot(elev_masked)
+plot(diekirch, add = TRUE)
+```
+
+## Extracting values to points
+
+```{r}
+pts <- centroids(lux) # one point per canton
 pts$elev <- extract(elev_lux, pts)[, 2]
 head(pts$elev)
 ```
@@ -199,7 +237,6 @@ elev_agg <- aggregate(elev, fact = 2, fun = "mean")
 par(mfrow = c(1, 2))
 plot(elev, main = "original")
 plot(elev_agg, main = "aggregated (fact = 2)")
-par(mfrow = c(1, 1))
 ```
 
 Use `disagg()` to increase resolution.
@@ -209,14 +246,15 @@ Use `disagg()` to increase resolution.
 Change the CRS of a raster with `project()` (EPSG codes are accepted):
 
 ```{r}
-crs(elev_lux, describe = TRUE)$name
+# get the epsg code
+crs(elev_lux, describe = TRUE)$code
 ```
 
 . . .
 
 ```{r}
 elev_proj <- project(elev_lux, "EPSG:3035") # LAEA Europe
-crs(elev_proj, describe = TRUE)$name
+crs(elev_proj, describe = TRUE)$code
 ```
 
 Further reading: <https://r.geocompx.org/geometry-operations#geo-ras>

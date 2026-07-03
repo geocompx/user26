@@ -1,7 +1,7 @@
 # Build maps step by step
 
 # Step 1: base R plot of a data frame with coordinates
-waterfalls = data.frame(
+waterfalls <- data.frame(
   name = c("Iguazu Falls", "Niagara Falls", "Victoria Falls"),
   lat = c(-25.686785, 43.092461, -17.931805),
   lon = c(-54.444981, -79.047150, 25.825558)
@@ -17,7 +17,11 @@ plot(
 
 # Step 2: spatial visualization with sf
 library(sf)
-waterfalls_sf = st_as_sf(waterfalls, coords = c("lon", "lat"), crs = "EPSG:4326")
+waterfalls_sf <- st_as_sf(
+  waterfalls,
+  coords = c("lon", "lat"),
+  crs = "EPSG:4326"
+)
 plot(waterfalls_sf)
 
 # Step 3: basic tmap visualization
@@ -33,7 +37,7 @@ data("world", package = "spData")
 plot(world)
 plot(st_geometry(world))
 
-tm_world = tm_shape(world) + tm_polygons()
+tm_world <- tm_shape(world) + tm_polygons()
 tm_world
 
 tm_world +
@@ -56,7 +60,7 @@ tm_world +
 
 # Step 6: style points and legend
 
-tm1 = tm_world +
+tm1 <- tm_world +
   tm_shape(waterfalls_sf) +
   tm_symbols(
     fill = "name",
@@ -72,7 +76,7 @@ tm1 = tm_world +
 tm1
 
 # Step 7: improve layout
-tm2 = tm1 +
+tm2 <- tm1 +
   tm_graticules() +
   tm_layout(
     earth_boundary = TRUE,
@@ -90,9 +94,9 @@ tmap_save(tm2, "waterfalls.png", width = 2400, height = 1200)
 # Step 1: join attributes
 library(dplyr)
 data("us_states", "us_states_df", package = "spData")
-us_states = left_join(us_states, us_states_df, by = c("NAME" = "state"))
+us_states <- left_join(us_states, us_states_df, by = c("NAME" = "state"))
 
-tm_us = tm_shape(us_states)
+tm_us <- tm_shape(us_states)
 
 tm_us +
   tm_polygons(fill = "median_income_15")
@@ -108,7 +112,7 @@ tm_us +
   tm_title("Median Income in 2015 (USD)")
 
 # Step 3: update the color scale
-med_inc15 = median(us_states$median_income_15, na.rm = TRUE)
+med_inc15 <- median(us_states$median_income_15, na.rm = TRUE)
 
 tm_us +
   tm_polygons(
@@ -119,7 +123,7 @@ tm_us +
   tm_crs("auto") +
   tm_title("Median Income in 2015 (USD)")
 
-tm_us1 = tm_us +
+tm_us1 <- tm_us +
   tm_polygons(
     fill = "median_income_15",
     fill.scale = tm_scale_continuous(midpoint = med_inc15),
@@ -143,7 +147,7 @@ tmap_mode("plot")
 
 # Step 4: add more map elements
 
-tm_us2 = tm_us1 +
+tm_us2 <- tm_us1 +
   tm_text(
     "NAME",
     size = "AREA",

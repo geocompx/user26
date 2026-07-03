@@ -17,10 +17,8 @@ We are the authors of
 - [Robin Lovelace](https://www.robinlovelace.net/) — Professor of Transport Data
   Science, Leeds; open-source tools for sustainable transport ([pct.bike](https://www.pct.bike/)).
 
-
 - [Jakub Nowosad](https://jakubnowosad.com/) — Associate Professor, Poznań;
   spatial machine learning; creator of **landscapemetrics** and **supercells**.
-
 
 - [Jannes Muenchow](https://cynkra.com/) — Senior Data Scientist & DevOps Engineer at [cynkra](https://cynkra.com/); R-GIS integration, e.g., co-author of **qgisprocess**.
 :::
@@ -236,7 +234,8 @@ data(bodmin)
 polymap(bodmin$poly)
 pointmap(
   as.points(bodmin),
-  add = TRUE, pch = 16,
+  add = TRUE,
+  pch = 16,
   col = "#2B66AB"
 )
 ```
@@ -253,7 +252,8 @@ data(bodmin)
 polymap(bodmin$poly)
 pointmap(
   as.points(bodmin),
-  add = TRUE, pch = 16,
+  add = TRUE,
+  pch = 16,
   col = "#2B66AB"
 )
 ```

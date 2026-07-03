@@ -32,7 +32,9 @@
       "extensions": [
         "reditorsupport.r",
         "rdebugger.r-debugger",
-        "quarto.quarto"
+        "quarto.quarto",
+        "anthropic.claude-code",
+        "Posit.air-vscode"
       ],
       "settings": {
         "r.rpath.linux": "/usr/local/bin/R",
@@ -50,10 +52,12 @@
         },
         "[r]": {
           "editor.formatOnSave": true,
-          "editor.formatOnPaste": true
+          "editor.formatOnPaste": true,
+          "editor.defaultFormatter": "Posit.air-vscode"
         },
         "[quarto]": {
-          "editor.formatOnSave": true
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "quarto.quarto"
         },
         "editor.rulers": [80],
         "editor.tabSize": 2,
