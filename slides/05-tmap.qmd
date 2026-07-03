@@ -57,18 +57,18 @@ tm_shape(nz) +
     fill = "Median_income",
     fill.scale = tm_scale(
       values = "viridis"
-      ),
+    ),
     fill.legend = tm_legend(
       title = "Median income",
       position = tm_pos_out(
-         "left", "center"
-         )
+        "left", "center"
+      )
     ),
     lwd = 0.5
   ) +
   tm_scalebar(
-   position = c("right", "bottom")
-   ) +
+    position = c("right", "bottom")
+  ) +
   tm_layout(bg.color = "lightblue")
 ```
 
@@ -83,7 +83,9 @@ File: [`code/map_code1.R`](../code/map_code1.R)
 Run the code below:
 
 ```{r, message=FALSE}
-library(sf); library(tmap); library(spData)
+library(sf)
+library(tmap)
+library(spData)
 ```
 
 The `nz` object contains a few attributes of regions within New Zealand.
