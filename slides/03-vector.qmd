@@ -64,13 +64,31 @@ An `sf` object is a **`data.frame`** (an S3 object) with a geometry column.
 ## An sf object is a data frame
 
 ```{r}
-nz
+#| eval: false
+head(nz)
+```
+
+. . .
+
+```{r}
+#| echo: false
+head(nz)
 ```
 
 ## Plotting an sf object
 
 ```{r}
 #| fig-height: 4.5
+#| eval: false
+plot(nz)
+```
+
+. . .
+
+
+```{r}
+#| fig-height: 4.5
+#| echo: false
 plot(nz)
 ```
 
@@ -78,19 +96,39 @@ plot(nz)
 
 ```{r}
 #| fig-height: 4.5
+#| eval: false
+plot(st_geometry(nz))
+```
+
+. . .
+
+```{r}
+#| fig-height: 4.5
+#| echo: false
 plot(st_geometry(nz))
 ```
 
 ## sf works with the tidyverse
 
-```{r}
-select(nz, Name, Population) |> head(2)
-```
-
 - **sf** works with the **tidyverse**.
 - Geometry is **just another column**.
 - The geometry column is **sticky** (kept unless dropped explicitly).
 
+. . .
+
+```{r}
+#| eval: false
+select(nz, Name, Population) |>
+  head(2)
+```
+
+. . .
+
+```{r}
+#| echo: false
+select(nz, Name, Population) |>
+  head(2)
+```
 ## Notes on the geometry column
 
 - Each row (feature) has one geometry, which may contain multiple parts
@@ -106,8 +144,108 @@ select(nz, Name, Population) |> head(2)
 
 ## Building geometries by hand
 
+::: {.columns}
+::: {.column width="50%"}
 ```{r}
-#| fig-height: 3.8
+#| eval: false
+# a point is a numeric vector
+p <- st_point(c(1.25, 1.25))
+plot(p, pch = 16, cex = 4, col = "blue")
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: false
+#| fig-height: 8
+# a point is a numeric vector
+p <- st_point(c(1.25, 1.25))
+mat <- matrix(c(1, 1, 1, 2, 2, 2, 2, 1, 1, 1), ncol = 2, byrow = TRUE)
+poly <- st_polygon(list(mat))
+plot(poly, border = NA)
+plot(p, pch = 16, col = "blue", cex = 4, add = TRUE)
+```
+:::
+:::
+## Building geometries by hand
+
+::: {.columns}
+::: {.column width="50%"}
+```{r}
+#| eval: false
+# a point is a numeric vector
+p <- st_point(c(1.25, 1.25))
+plot(p, pch = 16, cex = 4, col = "blue")
+```
+```{r}
+#| eval: false
+# a line is a matrix of >= 2 points
+l <-
+  matrix(
+    c(1.5, 1.5, 1.7, 1.7),
+    ncol = 2,
+    byrow = TRUE
+  ) |>
+  st_linestring()
+plot(l, col = "orange", lwd = 4, add = TRUE)
+```
+:::
+::: {.column width="50%"}
+```{r}
+#| echo: false
+#| fig-height: 8
+# a point is a numeric vector
+p <- st_point(c(1.25, 1.25))
+# a line is a matrix of >= 2 points
+l <- st_linestring(matrix(c(1.5, 1.5, 1.7, 1.7), ncol = 2, byrow = TRUE))
+poly <- st_polygon(list(mat))
+plot(poly, border = NA)
+plot(p, pch = 16, col = "blue", cex = 4, add = TRUE)
+plot(l, col = "orange", lwd = 4, add = TRUE)
+```
+:::
+:::
+
+## Building geometries by hand
+
+::: {.columns}
+::: {.column width="50%"}
+```{r}
+#| eval: false
+# a point is a numeric vector
+p <- st_point(c(1.25, 1.25))
+plot(p, pch = 16, cex = 4, col = "blue")
+```
+```{r}
+#| eval: false
+# a line is a matrix of >= 2 points
+l <-
+  matrix(
+    c(1.5, 1.5, 1.7, 1.7),
+    ncol = 2,
+    byrow = TRUE
+  ) |>
+  st_linestring()
+plot(l, col = "orange", lwd = 4, add = TRUE)
+```
+```{r}
+#| eval: false
+# a polygon is a list of matrices
+mat <- matrix(
+  c(1, 1, 1, 2, 2, 2, 2, 1, 1, 1),
+  ncol = 2,
+  byrow = TRUE
+)
+poly <- list(mat) |>
+  st_polygon()
+plot(poly, add = TRUE)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: false
+#| fig-height: 8
 # a point is a numeric vector
 p <- st_point(c(1.25, 1.25))
 # a line is a matrix of >= 2 points
@@ -116,11 +254,20 @@ l <- st_linestring(matrix(c(1.5, 1.5, 1.7, 1.7), ncol = 2, byrow = TRUE))
 mat <- matrix(c(1, 1, 1, 2, 2, 2, 2, 1, 1, 1), ncol = 2, byrow = TRUE)
 poly <- st_polygon(list(mat))
 plot(poly)
-plot(p, pch = 16, col = "blue", cex = 2, add = TRUE)
-plot(l, col = "orange", lwd = 2, add = TRUE)
+plot(p, pch = 16, col = "blue", cex = 4, add = TRUE)
+plot(l, col = "orange", lwd = 4, add = TRUE)
 ```
+:::
+:::
 
 ## Three classes: sf, sfc, sfg
+
+```{r}
+class(nz)
+```
+
+. . .
+
 
 ```{r}
 lc <- st_geometry(nz) # the geometry list-column
@@ -129,13 +276,14 @@ class(lc)
 
 . . .
 
+
 ```{r}
 class(lc[[1]]) # a single feature geometry
 ```
 
-- `sf`  — the data frame (attributes + geometry list-column)
-- `sfc` — the geometry list-column
 - `sfg` — a single feature geometry
+- `sfc` — the geometry list-column
+- `sf`  — the data frame (attributes + geometry list-column)
 
 See `vignette("sf1", package = "sf")`.
 
@@ -162,11 +310,23 @@ The one-table **dplyr** verbs work: `select()`, `filter()`, `mutate()`,
 `arrange()`, `summarise()` and `group_by()`, plus the pipe `|>`.
 
 ```{r}
+#| eval: false
 nz |>
   filter(Island == "North") |>
   select(Name, Population) |>
   head(2)
 ```
+
+. . .
+
+```{r}
+#| echo: false
+nz |>
+  filter(Island == "North") |>
+  select(Name, Population) |>
+  head(2)
+```
+
 
 Further reading: <https://r.geocompx.org/attr#vector-attribute-manipulation>
 
@@ -191,22 +351,96 @@ Spatial operations make use of the spatial relationship between features:
 
 ## Spatial subsetting
 
+::: {.columns}
+::: {.column}
 ```{r}
-#| fig-height: 4
+#| eval: false
+plot(st_geometry(nz))
+plot(
+  st_geometry(nz_height),
+  pch = 16,
+  col = "red",
+  add = TRUE
+)
+```
+
+:::
+
+::: {.column}
+```{r}
+#| fig-height: 8
+#| echo: false
 plot(st_geometry(nz))
 plot(st_geometry(nz_height), pch = 16, col = "red", add = TRUE)
 ```
+:::
+:::
 
 ## Spatial subsetting
 
+::: {.columns}
+::: {.column}
 ```{r}
-#| fig-height: 3.8
+#| eval: false
+canterbury <- nz |>
+  filter(Name == "Canterbury")
+# keep only the summits located inside Canterbury
+canterbury_height <- nz_height[canterbury, ]
+
+plot(st_geometry(canterbury))
+plot(
+  st_geometry(canterbury_height),
+  pch = 16,
+  col = "red",
+  add = TRUE
+)
+```
+
+:::
+
+::: {.column}
+```{r}
+#| fig-height: 8
+#| echo: false
+```
+:::
+:::
+
+
+## Spatial subsetting
+
+::: {.columns}
+::: {.column}
+```{r}
+#| eval: false
+canterbury <- nz |>
+  filter(Name == "Canterbury")
+# keep only the summits located inside Canterbury
+canterbury_height <- nz_height[canterbury, ]
+
+plot(st_geometry(canterbury))
+plot(
+  st_geometry(canterbury_height),
+  pch = 16,
+  col = "red",
+  add = TRUE
+)
+```
+
+:::
+
+::: {.column}
+```{r}
+#| fig-height: 8
+#| echo: false
 canterbury <- nz |> filter(Name == "Canterbury")
 # keep only the summits located inside Canterbury
 canterbury_height <- nz_height[canterbury, ]
 plot(st_geometry(canterbury))
 plot(st_geometry(canterbury_height), pch = 16, col = "red", add = TRUE)
 ```
+:::
+:::
 
 ## Topological relations
 
@@ -228,12 +462,26 @@ Other predicates: `st_disjoint()`, `st_touches()`, `st_within()`,
 Transfer attributes from one object to another based on their geometries.
 Add the region `Name` from `nz` to each summit in `nz_height`:
 
+. . .
+
 ```{r}
+#| eval: false
 join <- st_join(nz_height, select(nz, Name))
 join |>
   select(elevation, Name) |>
   head(2)
 ```
+
+. . .
+
+```{r}
+#| echo: false
+join <- st_join(nz_height, select(nz, Name))
+join |>
+  select(elevation, Name) |>
+  head(2)
+```
+
 
 Further reading: <https://r.geocompx.org/spatial-operations#spatial-vec>
 

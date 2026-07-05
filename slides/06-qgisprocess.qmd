@@ -93,7 +93,8 @@ elev <- rast(system.file("ex/elev.tif", package = "terra"))
 
 res <- qgis_run_algorithm(
   "grass:r.watershed",
-  elevation = elev, threshold = 100
+  elevation = elev,
+  threshold = 100
 )
 
 # 'tci' = topographic convergence (wetness) index
@@ -112,7 +113,7 @@ another function call in a reproducible R workflow.
 
 - **qgisprocess** turns 1000+ GIS geoalgorithms into ordinary R function calls.
 - Inputs/outputs are `sf`/`terra` objects — fully scriptable and reproducible.
-- Enable providers (e.g. `grassprovider`) to unlock GRASS algorithms.
+- Enable providers (e.g. `grassprovider`) to unlock many more  geoalgorithms.
 
 <br>
 
