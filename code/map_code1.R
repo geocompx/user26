@@ -37,7 +37,8 @@ data("world", package = "spData")
 plot(world)
 plot(st_geometry(world))
 
-tm_world <- tm_shape(world) + tm_polygons()
+tm_world <- tm_shape(world) +
+  tm_polygons()
 tm_world
 
 tm_world +
@@ -96,14 +97,12 @@ library(dplyr)
 data("us_states", "us_states_df", package = "spData")
 us_states <- left_join(us_states, us_states_df, by = c("NAME" = "state"))
 
-tm_us <- tm_shape(us_states)
-
-tm_us +
+tm_shape(us_states) +
   tm_polygons(fill = "median_income_15")
 
 # Step 2: add projection and title
 
-tm_us +
+tm_shape(us_states) +
   tm_polygons(
     fill = "median_income_15",
     fill.legend = tm_legend(title = "", position = c("left", "bottom"))
@@ -114,16 +113,16 @@ tm_us +
 # Step 3: update the color scale
 med_inc15 <- median(us_states$median_income_15, na.rm = TRUE)
 
-tm_us +
+tm_shape(us_states) +
   tm_polygons(
     fill = "median_income_15",
     fill.scale = tm_scale_continuous(midpoint = med_inc15),
-    fill.legend = tm_legend(title = "", position = c("left", "bottom"))
+    fill.legend = tm_legend(title = "", position = c("left", "bottom"), reverse = TRUE)
   ) +
   tm_crs("auto") +
   tm_title("Median Income in 2015 (USD)")
 
-tm_us1 <- tm_us +
+tm_us1 <- tm_shape(us_states) +
   tm_polygons(
     fill = "median_income_15",
     fill.scale = tm_scale_continuous(midpoint = med_inc15),
